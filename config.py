@@ -37,9 +37,11 @@ class Settings(BaseSettings):
     DATA_DIR: str = "./data"
     KNOWLEDGE_GRAPH_DIR: str = "./knowledge_graph_data"
     CACHE_DIR: str = "./cache_data"
+    DUCKDB_PATH: str ="./cache_data/catalog.duckdb"
     TRACES_DIR: str = "./traces_data"
     LOG_DIR: str = "./logs"
 
+    OFFLINE_ONLY: bool = False
     # Vendor
     PLOTLY_VENDOR_PATH: str = "./vendor/plotly-3.3.0.min.js"
 
