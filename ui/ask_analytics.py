@@ -150,7 +150,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # ------------------------------------------------------------
     result = st.session_state.get("last_result")
     if not result:
-        st.info [st.info]("Run the pipeline to generate plan + dashboard.")
+        st.info("Run the pipeline to generate plan + dashboard.")
         return
 
     status = result.get("status")
@@ -189,7 +189,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     if status in ("failed", "rejected", "failed_data_quality"):
         st.error(result.get("error") or result.get("rejection") or result.get("data_quality"))
-        st.info [st.info]("Open **Run Traces** to see node outputs & errors.")
+        st.info("Open **Run Traces** to see node outputs & errors.")
         return
 
     if status == "success":

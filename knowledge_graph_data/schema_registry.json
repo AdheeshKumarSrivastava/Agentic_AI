@@ -1,0 +1,2711 @@
+{
+  "tables": {
+    "dbo.__EFMigrationsHistory": {
+      "schema": "dbo",
+      "name": "__EFMigrationsHistory",
+      "row_count": 15,
+      "columns": [
+        {
+          "name": "MigrationId",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "ProductVersion",
+          "type": "nvarchar",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "MigrationId"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.ActivityAuditLogs": {
+      "schema": "dbo",
+      "name": "ActivityAuditLogs",
+      "row_count": 2648,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "PostDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "PostSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "RequestData",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ResponseData",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "StatusCode",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ErrorMessage",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EventSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderJson",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.BAUOptInFileProcesses": {
+      "schema": "dbo",
+      "name": "BAUOptInFileProcesses",
+      "row_count": 2845,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "FileName",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProcessedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "StatusCode",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "ErrorMessage",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.CPSMembers": {
+      "schema": "dbo",
+      "name": "CPSMembers",
+      "row_count": 1413172,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "FirstName",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "LastName",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "Email",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "CreatedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "IsProfileAvailable",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "IsEnrolledInDiffCountry",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "ActualCountry",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "CPSException",
+          "type": "varchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [],
+        "foreign_keys": []
+      }
+    },
+    "dbo.CPSMembers_US": {
+      "schema": "dbo",
+      "name": "CPSMembers_US",
+      "row_count": 812900,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "FirstName",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "LastName",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "Email",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "CreatedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "IsProfileAvailable",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "IsEnrolledInDiffCountry",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "ActualCountry",
+          "type": "varchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "CPSException",
+          "type": "varchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [],
+        "foreign_keys": []
+      }
+    },
+    "dbo.DataChangeLog": {
+      "schema": "dbo",
+      "name": "DataChangeLog",
+      "row_count": 0,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "TableName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FieldName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "RowId",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "OldValue",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "NewValue",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ActionName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "UpdatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Updated",
+          "type": "datetime2",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.EnrollCampaigns": {
+      "schema": "dbo",
+      "name": "EnrollCampaigns",
+      "row_count": 220,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Uid",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "ClickEventId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ClickDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "EnrollComplete",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "EnrollDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LoginDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastModifiedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPConfigChecks": {
+      "schema": "dbo",
+      "name": "MBPConfigChecks",
+      "row_count": 0,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ConfigId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "KeyName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "KayValue",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "KayOperatorValue",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "KayOperatorId",
+          "type": "int",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPConfigCoupons": {
+      "schema": "dbo",
+      "name": "MBPConfigCoupons",
+      "row_count": 0,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ConfigId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "SubConfigId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Catid",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CouponCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "MaxAttempts",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "StartDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EndDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "Inactive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "Createdby",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Lastmodified",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "Lastmodifiedby",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Priority",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Description",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPConfigsMaster": {
+      "schema": "dbo",
+      "name": "MBPConfigsMaster",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "SubCatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ValidUpToInMonths",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "SignUpBonusCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CreatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "LastModifiedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EffectiveStartDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "EffectiveEndDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "PromoCodes",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPConfigsMstr": {
+      "schema": "dbo",
+      "name": "MBPConfigsMstr",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "SubCatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ValidUpToInMonths",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "SignUpBonusCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CreatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "LastModifiedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EffectiveStartDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "EffectiveEndDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "PromoCodes",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPMemberCouponCount": {
+      "schema": "dbo",
+      "name": "MBPMemberCouponCount",
+      "row_count": 7,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "CouponType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "UsedCouponCount",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPMemberCouponData": {
+      "schema": "dbo",
+      "name": "MBPMemberCouponData",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "CouponCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderNumber",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "DPID",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderStatus",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CouponType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ItemId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsOrderLevel",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime2",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MBPSBDetails": {
+      "schema": "dbo",
+      "name": "MBPSBDetails",
+      "row_count": 5,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ConfigId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "AccountName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Passcode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "AffinityID",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Status",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Category",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Updated",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "UpdatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": [
+          {
+            "parent_column": "ConfigId",
+            "ref_schema": "dbo",
+            "ref_table": "MBPConfigsMstr",
+            "ref_column": "Id"
+          }
+        ]
+      }
+    },
+    "dbo.MBPSBDetails_old": {
+      "schema": "dbo",
+      "name": "MBPSBDetails_old",
+      "row_count": 8384,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "AccountName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Passcode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Status",
+          "type": "bit",
+          "nullable": true
+        },
+        {
+          "name": "Category",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CreatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Updated",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "UpdatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ConfigId",
+          "type": "int",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MemberDeleteAuditLogs": {
+      "schema": "dbo",
+      "name": "MemberDeleteAuditLogs",
+      "row_count": 42,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "EnrollSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "DeletedSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Country",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "RequestDate",
+          "type": "datetime2",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MemberOrders": {
+      "schema": "dbo",
+      "name": "MemberOrders",
+      "row_count": 41245,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "PostDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderNumber",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "OrderDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "OrderSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "OrderType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "RequestPayload",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ResponsePayload",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ResponseCode",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "StatusNumber",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "StatusMessage",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EventSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "UpdatedDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "OrderJson",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MemberPersuade": {
+      "schema": "dbo",
+      "name": "MemberPersuade",
+      "row_count": 764900,
+      "columns": [
+        {
+          "name": "membernumber",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "memberkey",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "enrolldate",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "code",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "emailaddress",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "status",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "emailoptout",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [],
+        "foreign_keys": []
+      }
+    },
+    "dbo.Members": {
+      "schema": "dbo",
+      "name": "Members",
+      "row_count": 10702,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "EpsilonId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Program_ID",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "LanguageCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsPrimary",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "PreviouslyActiveMember",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreationChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "UpdateChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Deleted",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "DeletionChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LoyaltyTierLevel",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "BadgeNumber",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudIndicator",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "FraudChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudDetected",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "LinkNumber",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": [
+          {
+            "parent_column": "Program_ID",
+            "ref_schema": "dbo",
+            "ref_table": "ProgramDetails",
+            "ref_column": "Id"
+          }
+        ]
+      }
+    },
+    "dbo.Members_02022024": {
+      "schema": "dbo",
+      "name": "Members_02022024",
+      "row_count": 18593823,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "EpsilonId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Program_ID",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "LanguageCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsPrimary",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "PreviouslyActiveMember",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreationChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "UpdateChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Deleted",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "DeletionChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LoyaltyTierLevel",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "BadgeNumber",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudIndicator",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "FraudChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudDetected",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "LinkNumber",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsCPSDataCollected",
+          "type": "bit",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.Members_US": {
+      "schema": "dbo",
+      "name": "Members_US",
+      "row_count": 5767824,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "EpsilonId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Program_ID",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "LanguageCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsPrimary",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "PreviouslyActiveMember",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreationChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "UpdateChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Deleted",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "DeletionChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LoyaltyTierLevel",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "BadgeNumber",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudIndicator",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "FraudChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "FraudDetected",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "LinkNumber",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsCPSDataCollected",
+          "type": "bit",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.MppMemberEnrolls": {
+      "schema": "dbo",
+      "name": "MppMemberEnrolls",
+      "row_count": 249,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ClickEventId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "AcctId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ClickDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EnrollDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LoginDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "EnrollComplete",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "UpdateType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Remarks",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EmailValidated",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "LastModified",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "LastModifiedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ValidatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "MBPEmail",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ValidUpTo",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "ValidatedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "AdditionalFields",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.OptOutMembers": {
+      "schema": "dbo",
+      "name": "OptOutMembers",
+      "row_count": 2251,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "Country",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Feedback",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Reason",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.PersuadeRegistrationFailures": {
+      "schema": "dbo",
+      "name": "PersuadeRegistrationFailures",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "RegistrationDefinition",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Exception",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "BatchId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "RetryAttempts",
+          "type": "int",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.PMCDataProcessingActivityLog": {
+      "schema": "dbo",
+      "name": "PMCDataProcessingActivityLog",
+      "row_count": 6439,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "FileName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Country",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsDateRangeUpload",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "UploadedDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EnrollDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "Status",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Message",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.ProgramDetails": {
+      "schema": "dbo",
+      "name": "ProgramDetails",
+      "row_count": 15,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Description",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Segment",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "RewardsEarnLimit",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "RewardsRedeemRate",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "DellAdvantagePercent",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "DellPreferredAccountPercent",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "TargetLoyaltyTierLevel",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ShippingType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Enabled",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreationChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "UpdateChannel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Deleted",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "DeletionChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "SubscriptionId",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "VersionId",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "IsTaxIncluded",
+          "type": "bit",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.ProgramDetailsHistory": {
+      "schema": "dbo",
+      "name": "ProgramDetailsHistory",
+      "row_count": 0,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "EffectiveStartDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EffectiveEndDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EffectiveUpdateBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProgramId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Description",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Segment",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "DellAdvantagePercent",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "DellPreferredAccountPercent",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "RewardsRedeemRate",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "RewardsEarnLimit",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "TargetLoyaltyTierLevel",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ShippingType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Enabled",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "CreationChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "UpdateChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Deleted",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "DeletionChannel",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "SubscriptionId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "VersionId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsTaxIncluded",
+          "type": "bit",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.RewardCampaignActivityLogs": {
+      "schema": "dbo",
+      "name": "RewardCampaignActivityLogs",
+      "row_count": 2,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "CampaignId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ActivityBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ActivityDetails",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CreateDate",
+          "type": "datetime2",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.RewardCampaignCoupons": {
+      "schema": "dbo",
+      "name": "RewardCampaignCoupons",
+      "row_count": 55,
+      "columns": [
+        {
+          "name": "CouponCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "CampaignId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Status",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "AssignedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LastUpdatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastUpdatedOn",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "CouponCode"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.RewardCampaigns": {
+      "schema": "dbo",
+      "name": "RewardCampaigns",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "CampaignId",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "CampaignName",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CampaignTag",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "StartDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "EndDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "OfferType",
+          "type": "tinyint",
+          "nullable": false
+        },
+        {
+          "name": "OfferValue",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "CmsImgLink",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CreateDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "IsActive",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdatedBy",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "LastUpdatedOn",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "CouponThreshold",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "Status",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "DellBenefitId",
+          "type": "int",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "CampaignId"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.RewardsAccountQueryAuditLogs": {
+      "schema": "dbo",
+      "name": "RewardsAccountQueryAuditLogs",
+      "row_count": 942,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Username",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "RequestDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "AccountBalance",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "AccountBalanceFormatted",
+          "type": "nvarchar",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.RewardsRedemptionAuditLogs": {
+      "schema": "dbo",
+      "name": "RewardsRedemptionAuditLogs",
+      "row_count": 315694,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "RedemptionType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "PostDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "PostSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "RequestData",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ResponseData",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "MemberKey",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "StatusCode",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ErrorMessage",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "EventSource",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.SheeridVerification": {
+      "schema": "dbo",
+      "name": "SheeridVerification",
+      "row_count": 20,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "VerificationId",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Created",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "VStatus",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "PStatus",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebhookRequest",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "WebhookResponse",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "WebhookStatusCode",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "WebhookReceivedOn",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LastUpdated",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "LastUpdatedBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "IsCurrentStatus",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.sysdiagrams": {
+      "schema": "dbo",
+      "name": "sysdiagrams",
+      "row_count": 1,
+      "columns": [
+        {
+          "name": "name",
+          "type": "sysname",
+          "nullable": false
+        },
+        {
+          "name": "principal_id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "diagram_id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "version",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "definition",
+          "type": "varbinary",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "diagram_id"
+        ],
+        "foreign_keys": []
+      }
+    },
+    "dbo.test": {
+      "schema": "dbo",
+      "name": "test",
+      "row_count": 32,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "ClickEventId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ProfileId",
+          "type": "uniqueidentifier",
+          "nullable": true
+        },
+        {
+          "name": "AcctId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CatId",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "ClickDate",
+          "type": "datetime2",
+          "nullable": false
+        },
+        {
+          "name": "EnrollDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LoginDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "EnrollComplete",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "UpdateType",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "CountryCode",
+          "type": "nvarchar",
+          "nullable": true
+        },
+        {
+          "name": "Remarks",
+          "type": "nvarchar",
+          "nullable": true
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [],
+        "foreign_keys": []
+      }
+    },
+    "dbo.Users": {
+      "schema": "dbo",
+      "name": "Users",
+      "row_count": 56,
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        {
+          "name": "Username",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Password",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "Roles",
+          "type": "smallint",
+          "nullable": false
+        },
+        {
+          "name": "LastLoginDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "LoginAttempts",
+          "type": "tinyint",
+          "nullable": false
+        },
+        {
+          "name": "Locked",
+          "type": "bit",
+          "nullable": false
+        },
+        {
+          "name": "LockedDate",
+          "type": "datetime2",
+          "nullable": true
+        },
+        {
+          "name": "Channel",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceCode",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "SourceUpdateBy",
+          "type": "nvarchar",
+          "nullable": false
+        },
+        {
+          "name": "WebSourceId",
+          "type": "int",
+          "nullable": false
+        }
+      ],
+      "pk_fk_hints": {
+        "primary_key": [
+          "Id"
+        ],
+        "foreign_keys": []
+      }
+    }
+  }
+}
