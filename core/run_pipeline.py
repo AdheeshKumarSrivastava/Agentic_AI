@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple, List
+from typing import Any, Dict, Optional, List
 import traceback
 
 import pandas as pd
@@ -48,10 +48,15 @@ def run_agentic_pipeline(
     allowed_tables: List[str],
     human_review: Optional[Dict[str, Any]],
     developer_mode: bool,
+    large_mode: bool,
 ) -> Dict[str, Any]:
     """
     Runs A→L deterministically, persisting node outputs to TraceStore.
     Human review packet is applied ONLY if provided explicitly.
+
+    large_mode:
+      - True: SQLAgent uses TOP(MAX_RETURNED_ROWS)
+      - False: SQLAgent uses TOP(DEFAULT_EXPLORATORY_TOP)
     """
     kg = KnowledgeGraphStore(settings.KNOWLEDGE_GRAPH_DIR)
     registry = SchemaRegistry(settings.KNOWLEDGE_GRAPH_DIR)
@@ -68,6 +73,14 @@ def run_agentic_pipeline(
     query_logs = QueryLogStore(settings.LOG_DIR)
 
     final: Dict[str, Any] = {"run_id": run_id, "status": "started"}
+
+    # Record run-level config into traces (so it's visible in Trace Viewer)
+    trace_store.add_node(run_id, "RUN_CONFIG", {
+        "developer_mode": bool(developer_mode),
+        "large_mode": bool(large_mode),
+        "allowed_tables_count": len(allowed_tables),
+        "allowed_tables_preview": allowed_tables[:50],
+    })
 
     # -------------------------
     # A) Intent extraction
@@ -103,7 +116,13 @@ def run_agentic_pipeline(
             schema_reasoning=schema_reasoning,
             allowed_tables=allowed_tables,
         )
+
+        # ✅ attach large_mode to plan so every downstream node can use it
+        plan["large_mode"] = bool(large_mode)
+
         trace_store.add_node(run_id, "C_plan", plan)
+        trace_store.add_node(run_id, "C_plan__large_mode", {"large_mode": bool(large_mode)})
+
         critique_c = critique.critique_step("C_plan", plan)
         trace_store.add_node(run_id, "C_plan__critique", critique_c)
     except Exception as e:
@@ -122,6 +141,13 @@ def run_agentic_pipeline(
             applied = planner.apply_human_review(plan=plan, review=human_review, allowed_tables=allowed_tables)
             plan = applied["plan"]
             allowed_tables = applied["allowed_tables"]
+
+            # keep large_mode stable (no drift) unless human explicitly sets it
+            if isinstance(human_review, dict) and "large_mode" in human_review:
+                plan["large_mode"] = bool(human_review["large_mode"])
+            else:
+                plan["large_mode"] = bool(large_mode)
+
             trace_store.add_node(run_id, "D_human_review__applied", applied)
 
         critique_d = critique.critique_step("D_human_review", {"review_packet": review_packet, "applied": human_review})
@@ -140,7 +166,11 @@ def run_agentic_pipeline(
     # E) SQL generation
     # -------------------------
     try:
-        sql_bundle = sql_agent.generate_sql(plan=plan, allowed_tables=allowed_tables)
+        sql_bundle = sql_agent.generate_sql(
+            plan=plan,
+            allowed_tables=allowed_tables,
+            large_mode=bool(plan.get("large_mode", large_mode)),
+        )
         trace_store.add_node(run_id, "E_sql_generation", sql_bundle)
         critique_e = critique.critique_step("E_sql_generation", sql_bundle)
         trace_store.add_node(run_id, "E_sql_generation__critique", critique_e)
@@ -211,7 +241,11 @@ def run_agentic_pipeline(
     try:
         html_bundle = dashboard.build_dashboard(df=df, plan=plan, insights=insights)
         trace_store.add_node(run_id, "J_dashboard", {"dashboard_meta": html_bundle["meta"]})
-        trace_store.add_node(run_id, "J_dashboard__html", {"html": html_bundle["html"][:5000], "note": "truncated preview"})
+        trace_store.add_node(
+            run_id,
+            "J_dashboard__html",
+            {"html": html_bundle["html"][:5000], "note": "truncated preview"},
+        )
         critique_j = critique.critique_step("J_dashboard", html_bundle["meta"])
         trace_store.add_node(run_id, "J_dashboard__critique", critique_j)
     except Exception as e:
@@ -219,7 +253,7 @@ def run_agentic_pipeline(
         return {"run_id": run_id, "status": "failed", "error": f"Dashboard failed: {e}"}
 
     # -------------------------
-    # K) Render: UI does this, but we record bundle
+    # K) Render
     # -------------------------
     trace_store.add_node(run_id, "K_render", {"ok": True, "note": "Rendered in Streamlit UI"})
     critique_k = critique.critique_step("K_render", {"ok": True})
@@ -228,34 +262,38 @@ def run_agentic_pipeline(
     # -------------------------
     # L) Critique rollup
     # -------------------------
-    rollup = critique.rollup([
-        ("A", trace_store.get_node(run_id, "A_intent__critique")),
-        ("B", trace_store.get_node(run_id, "B_schema_reasoning__critique")),
-        ("C", trace_store.get_node(run_id, "C_plan__critique")),
-        ("D", trace_store.get_node(run_id, "D_human_review__critique")),
-        ("E", trace_store.get_node(run_id, "E_sql_generation__critique")),
-        ("F", trace_store.get_node(run_id, "F_sql_safety__critique")),
-        ("G", trace_store.get_node(run_id, "G_execute__critique")),
-        ("H", trace_store.get_node(run_id, "H_data_validation__critique")),
-        ("I", trace_store.get_node(run_id, "I_insights__critique")),
-        ("J", trace_store.get_node(run_id, "J_dashboard__critique")),
-        ("K", trace_store.get_node(run_id, "K_render__critique")),
-    ])
+    rollup = critique.rollup(
+        [
+            ("A", trace_store.get_node(run_id, "A_intent__critique")),
+            ("B", trace_store.get_node(run_id, "B_schema_reasoning__critique")),
+            ("C", trace_store.get_node(run_id, "C_plan__critique")),
+            ("D", trace_store.get_node(run_id, "D_human_review__critique")),
+            ("E", trace_store.get_node(run_id, "E_sql_generation__critique")),
+            ("F", trace_store.get_node(run_id, "F_sql_safety__critique")),
+            ("G", trace_store.get_node(run_id, "G_execute__critique")),
+            ("H", trace_store.get_node(run_id, "H_data_validation__critique")),
+            ("I", trace_store.get_node(run_id, "I_insights__critique")),
+            ("J", trace_store.get_node(run_id, "J_dashboard__critique")),
+            ("K", trace_store.get_node(run_id, "K_render__critique")),
+        ]
+    )
     trace_store.add_node(run_id, "L_critique_rollup", rollup)
 
-    final.update({
-        "status": "success",
-        "plan": plan,
-        "sql": sql_bundle["sql"],
-        "params": sql_bundle.get("params") or {},
-        "exec_meta": exec_meta,
-        "data_quality": dq_report,
-        "insights": insights,
-        "dashboard_html": html_bundle["html"],
-        "dashboard_meta": html_bundle["meta"],
-        "df_preview": df.head(50).to_dict(orient="records"),
-        "columns": list(df.columns),
-        "rows": int(len(df)),
-    })
+    final.update(
+        {
+            "status": "success",
+            "plan": plan,
+            "sql": sql_bundle["sql"],
+            "params": sql_bundle.get("params") or {},
+            "exec_meta": exec_meta,
+            "data_quality": dq_report,
+            "insights": insights,
+            "dashboard_html": html_bundle["html"],
+            "dashboard_meta": html_bundle["meta"],
+            "df_preview": df.head(50).to_dict(orient="records"),
+            "columns": list(df.columns),
+            "rows": int(len(df)),
+        }
+    )
     trace_store.finalize(run_id, status="success")
     return final
