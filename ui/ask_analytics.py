@@ -30,9 +30,6 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     if "allowed_tables" not in st.session_state:
         st.session_state["allowed_tables"] = all_tables
 
-    if "allowed_tables_picker" not in st.session_state:
-        st.session_state["allowed_tables_picker"] = st.session_state["allowed_tables"]
-
     if "large_mode" not in st.session_state:
         st.session_state["large_mode"] = True
 
@@ -59,22 +56,27 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     planner = PlannerAgent(settings=settings, kg=kg, registry=registry)
 
+    # ✅ Apply pending updates BEFORE widget instantiation (Streamlit requirement)
+    if "pending_allowed_tables" in st.session_state:
+        st.session_state["allowed_tables"] = st.session_state.pop("pending_allowed_tables")
+
     col1, col2 = st.columns([1, 1])
 
     with col1:
         st.caption("Current allowlist (agents will only use these)")
+
+        # No widget-key mutation after instantiation:
         allowed_tables = st.multiselect(
             "Allowed tables",
             options=all_tables,
-            default=st.session_state["allowed_tables_picker"],
+            default=st.session_state.get("allowed_tables", all_tables),
             key="allowed_tables_picker",
         )
 
         c1, c2 = st.columns([1, 1])
         with c1:
             if st.button("Reset allowlist to ALL tables"):
-                st.session_state["allowed_tables_picker"] = all_tables
-                st.session_state["allowed_tables"] = all_tables
+                st.session_state["pending_allowed_tables"] = all_tables
                 st.rerun()
 
         with c2:
@@ -82,6 +84,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     with col2:
         st.caption("Agent suggestion (click to generate)")
+
         if st.button("Suggest tables from my question", type="secondary"):
             if not question.strip():
                 st.error("Type a question first.")
@@ -100,27 +103,27 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
             st.write(suggested)
 
             if st.button("Apply suggested tables as allowlist", type="primary"):
-                # ✅ Correctly update widget state + persisted allowlist
-                st.session_state["allowed_tables_picker"] = suggested
-                st.session_state["allowed_tables"] = suggested
+                st.session_state["pending_allowed_tables"] = suggested
                 st.rerun()
 
             with st.expander("Show suggestion details (intent + scoring)"):
-                st.json({
-                    "intent": st.session_state.get("suggested_intent", {}),
-                    "schema_reasoning": st.session_state.get("suggested_reasoning", {}),
-                })
+                st.json(
+                    {
+                        "intent": st.session_state.get("suggested_intent", {}),
+                        "schema_reasoning": st.session_state.get("suggested_reasoning", {}),
+                    }
+                )
 
     # Persist final allowlist from widget to session state
     st.session_state["allowed_tables"] = allowed_tables
 
     # ------------------------------------------------------------
-    # Large Query Mode (actually used by pipeline)
+    # Large Query Mode (passed to pipeline only if your run_pipeline supports it)
     # ------------------------------------------------------------
     st.session_state["large_mode"] = st.toggle(
         "Large Query Mode (use MAX_RETURNED_ROWS)",
         value=bool(st.session_state["large_mode"]),
-        help="ON: SQLAgent uses TOP(MAX_RETURNED_ROWS). OFF: uses TOP(DEFAULT_EXPLORATORY_TOP).",
+        help="ON: SQLAgent should use TOP(MAX_RETURNED_ROWS). OFF: uses TOP(DEFAULT_EXPLORATORY_TOP).",
     )
 
     # ------------------------------------------------------------
@@ -133,6 +136,9 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     if run_btn:
         run_id = trace_store.new_run()
+
+        # ⚠️ If your run_agentic_pipeline signature does NOT include large_mode,
+        # remove it from the call below to avoid TypeError.
         result = run_agentic_pipeline(
             settings=settings,
             trace_store=trace_store,
@@ -141,8 +147,8 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
             allowed_tables=allowed_tables,
             human_review=None,
             developer_mode=developer_mode,
-            large_mode=bool(st.session_state["large_mode"]),  # ✅ pass down
         )
+
         st.session_state["last_result"] = result
 
     # ------------------------------------------------------------
@@ -181,7 +187,6 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
                 allowed_tables=allowed_tables,
                 human_review=human_review,
                 developer_mode=developer_mode,
-                large_mode=bool(st.session_state["large_mode"]),  # ✅ pass down
             )
             st.session_state["last_result"] = result2
             result = result2
@@ -203,11 +208,22 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
         else:
             st.warning("Dashboard HTML missing.")
 
+        # Download dashboard HTML
+        if html:
+            st.download_button(
+                "Download Dashboard HTML",
+                data=html.encode("utf-8"),
+                file_name=f"dashboard_{result.get('run_id','run')}.html",
+                mime="text/html",
+            )
+
         if developer_mode:
             st.subheader("Developer Outputs")
-            st.json({
-                "sql": result.get("sql"),
-                "exec_meta": result.get("exec_meta"),
-                "large_mode": bool(st.session_state["large_mode"]),
-                "allowed_tables_count": len(allowed_tables),
-            })
+            st.json(
+                {
+                    "sql": result.get("sql"),
+                    "exec_meta": result.get("exec_meta"),
+                    "large_mode": bool(st.session_state["large_mode"]),
+                    "allowed_tables_count": len(allowed_tables),
+                }
+            )

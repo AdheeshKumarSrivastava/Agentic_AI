@@ -19,3 +19,5 @@ pytest>=8.0.0
 # Autogen (preferred orchestration)
 pyautogen[ollama]>=0.3.0
 autogen
+ollama
+fix-busted-json

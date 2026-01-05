@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 import re
 
 from config import Settings
@@ -18,7 +18,9 @@ class SQLAgent:
     - Respects Large Query Mode:
         - large_mode=True => TOP(MAX_RETURNED_ROWS)
         - else => TOP(DEFAULT_EXPLORATORY_TOP)
-    - If plan indicates aggregation, we generate GROUP BY.
+    - If plan indicates aggregation, generates GROUP BY.
+    - Supports optional ORDER BY if plan provides safe sortable columns.
+    - Supports optional time bucketing for SQL Server.
     """
 
     def __init__(self, settings: Settings, registry: SchemaRegistry):
@@ -88,10 +90,15 @@ class SQLAgent:
 
         # Determine aggregation mode
         metrics = plan.get("metrics", []) if isinstance(plan.get("metrics", []), list) else []
-        is_agg = bool(plan.get("aggregation") or plan.get("group_by") or any(self._is_metric_agg(m) for m in metrics))
+        is_agg = bool(
+            plan.get("aggregation")
+            or plan.get("group_by")
+            or any(self._is_metric_agg(m) for m in metrics)
+        )
 
         dims = [d for d in plan.get("dimensions", []) if isinstance(d, str)]
         time_field = plan.get("time_field") if isinstance(plan.get("time_field"), str) else None
+        time_grain = plan.get("time_grain") if isinstance(plan.get("time_grain"), str) else None  # day/week/month/year
 
         # SELECT columns (dimensions/time)
         dim_select_cols: List[str] = []
@@ -103,11 +110,22 @@ class SQLAgent:
                 dim_select_cols.append(col_ref)
                 group_by_cols.append(col_ref.split(" AS ")[0].strip())
 
+        # Time bucketing
         if time_field:
             tf = self._resolve_column(time_field, tables, alias_map)
-            if tf and tf not in dim_select_cols:
-                dim_select_cols.append(tf)
-                group_by_cols.append(tf.split(" AS ")[0].strip())
+            if tf:
+                if time_grain and is_agg:
+                    # Replace tf with bucketed version
+                    tf_left, tf_alias = self._split_expr_alias(tf)
+                    bucket_left = self._time_bucket_sqlserver(tf_left, time_grain)
+                    tf_bucket = f"{bucket_left} AS [{tf_alias}]"
+                    dim_select_cols.append(tf_bucket)
+                    group_by_cols.append(bucket_left)
+                else:
+                    # raw time column
+                    if tf not in dim_select_cols:
+                        dim_select_cols.append(tf)
+                        group_by_cols.append(tf.split(" AS ")[0].strip())
 
         # Metric SELECT columns
         metric_select_cols: List[str] = []
@@ -116,8 +134,7 @@ class SQLAgent:
         for m in metrics:
             if not isinstance(m, dict):
                 continue
-            # Expected metric shape (PlannerAgent should produce):
-            # {"name": "Revenue", "agg": "sum", "field": "amount"} or {"name": "...", "expression": "..."} (we ignore expression for safety)
+
             m_name = m.get("name")
             agg = (m.get("agg") or "").lower().strip()
             field = m.get("field")
@@ -138,23 +155,24 @@ class SQLAgent:
             # Agg metric
             if not isinstance(field, str):
                 continue
+
             base_col = self._resolve_column(field, tables, alias_map)
             if not base_col:
                 continue
-            base_left = base_col.split(" AS ")[0].strip()
 
+            base_left = base_col.split(" AS ")[0].strip()
             sql_agg = self._agg_sql(agg, base_left)
+
             alias = self._safe_alias(m_name)
             metric_select_cols.append(f"{sql_agg} AS [{alias}]")
             metric_expected_names.append(alias)
 
         # Fallback if nothing selected
         if not dim_select_cols and not metric_select_cols:
-            # pick first N columns from primary
             cols = self.registry.table_columns(primary)
             cols = cols[: min(12, len(cols))]
             dim_select_cols = [f"{alias_map[primary]}.[{c}] AS [{c}]" for c in cols]
-            # no GROUP BY; this becomes raw select
+            is_agg = False
 
         # Deduplicate
         select_cols = self._dedupe_by_alias(dim_select_cols + metric_select_cols)
@@ -200,10 +218,39 @@ class SQLAgent:
         # GROUP BY if aggregation
         group_by_clause = ""
         if is_agg:
-            # Only group by dimension/time fields
             gb = [c for c in group_by_cols if c]
             if gb:
                 group_by_clause = "GROUP BY " + ", ".join(gb)
+
+        # ORDER BY (safe)
+        order_by_clause = ""
+        order_by = plan.get("order_by")
+        if isinstance(order_by, list) and order_by:
+            order_parts: List[str] = []
+            for ob in order_by:
+                # ob: {"field":"col", "dir":"desc"}
+                if not isinstance(ob, dict):
+                    continue
+                ob_field = str(ob.get("field", "")).strip()
+                ob_dir = (str(ob.get("dir", "asc")).strip().upper() or "ASC")
+                if ob_dir not in {"ASC", "DESC"}:
+                    ob_dir = "ASC"
+
+                # allow ordering by:
+                # - dimension columns
+                # - metrics aliases (already safe)
+                # Try resolve column first; if not, allow metric alias exact match
+                col_ref = self._resolve_column(ob_field, tables, alias_map)
+                if col_ref:
+                    left = col_ref.split(" AS ")[0].strip()
+                    order_parts.append(f"{left} {ob_dir}")
+                else:
+                    safe_alias = self._safe_alias(ob_field)
+                    if safe_alias in metric_expected_names:
+                        order_parts.append(f"[{safe_alias}] {ob_dir}")
+
+            if order_parts:
+                order_by_clause = "ORDER BY " + ", ".join(order_parts)
 
         # TOP selection (Large Query Mode)
         if large_mode is None:
@@ -211,9 +258,7 @@ class SQLAgent:
 
         top = int(self.settings.MAX_RETURNED_ROWS if large_mode else self.settings.DEFAULT_EXPLORATORY_TOP)
 
-        # In agg mode, TOP still helps if dimension cardinality is huge; keep it.
         select_prefix = f"SELECT TOP ({top}) "
-
         select_list = ",\n  ".join(select_cols)
 
         sql = "\n".join(
@@ -223,6 +268,7 @@ class SQLAgent:
                 *join_clauses,
                 where_clause,
                 group_by_clause,
+                order_by_clause,
             ]
         ).strip()
 
@@ -230,7 +276,15 @@ class SQLAgent:
         expected = [self._alias_name(c) for c in select_cols]
         plan["expected_columns"] = expected
 
-        return {"sql": sql, "params": params, "expected_columns": expected, "is_aggregated": is_agg, "top": top}
+        return {
+            "sql": sql,
+            "params": params,
+            "expected_columns": expected,
+            "is_aggregated": is_agg,
+            "top": top,
+            "order_by": order_by,
+            "time_grain": time_grain,
+        }
 
     # -----------------------------
     # Helpers
@@ -250,8 +304,9 @@ class SQLAgent:
         if not hint:
             return None
 
-        # Accept schema.table.col (3-part)
         parts = hint.split(".")
+
+        # Accept schema.table.col (3-part)
         if len(parts) == 3:
             tpart = f"{parts[0]}.{parts[1]}"
             cpart = parts[2]
@@ -260,10 +315,8 @@ class SQLAgent:
                 return f"{a}.[{cpart}] AS [{cpart}]"
             return None
 
-        # If hint is schema.table (invalid for column)
+        # refuse ambiguous "table.col"
         if len(parts) == 2:
-            # refuse ambiguous "table.col" because table might not be schema.table
-            # we keep strict: only schema.table.col allowed
             return None
 
         # match by column name across tables
@@ -280,6 +333,16 @@ class SQLAgent:
             return m.group(1)
         return col_expr
 
+    def _split_expr_alias(self, col_expr: str) -> Tuple[str, str]:
+        """
+        "t0.[OrderDate] AS [OrderDate]" -> ("t0.[OrderDate]", "OrderDate")
+        """
+        m = re.search(r"^(.*?)\s+AS\s+\[(.+?)\]\s*$", col_expr.strip(), flags=re.IGNORECASE)
+        if m:
+            return m.group(1).strip(), m.group(2).strip()
+        # fallback: return expr as both
+        return col_expr.strip(), self._alias_name(col_expr).strip()
+
     def _dedupe_by_alias(self, col_exprs: List[str]) -> List[str]:
         seen = set()
         cleaned: List[str] = []
@@ -291,7 +354,6 @@ class SQLAgent:
         return cleaned
 
     def _safe_alias(self, name: str) -> str:
-        # keep readable but safe for [alias]
         name = (name or "").strip()
         name = re.sub(r"[^a-zA-Z0-9 _-]", "", name)
         name = re.sub(r"\s+", " ", name).strip()
@@ -304,7 +366,7 @@ class SQLAgent:
         agg = (agg or "").lower().strip()
         if agg == "sum":
             return f"SUM({col_left})"
-        if agg == "avg" or agg == "mean":
+        if agg in {"avg", "mean"}:
             return f"AVG({col_left})"
         if agg == "min":
             return f"MIN({col_left})"
@@ -314,5 +376,23 @@ class SQLAgent:
             return "COUNT(1)"
         if agg == "count_distinct":
             return f"COUNT(DISTINCT {col_left})"
-        # fallback safe
         return f"SUM({col_left})"
+
+    def _time_bucket_sqlserver(self, col_left: str, grain: str) -> str:
+        """
+        SQL Server time bucketing:
+        - day:   DATEADD(day, DATEDIFF(day, 0, col), 0)
+        - week:  DATEADD(week, DATEDIFF(week, 0, col), 0)
+        - month: DATEADD(month, DATEDIFF(month, 0, col), 0)
+        - year:  DATEADD(year, DATEDIFF(year, 0, col), 0)
+        """
+        g = (grain or "").lower().strip()
+        if g == "day":
+            return f"DATEADD(day, DATEDIFF(day, 0, {col_left}), 0)"
+        if g == "week":
+            return f"DATEADD(week, DATEDIFF(week, 0, {col_left}), 0)"
+        if g == "month":
+            return f"DATEADD(month, DATEDIFF(month, 0, {col_left}), 0)"
+        if g == "year":
+            return f"DATEADD(year, DATEDIFF(year, 0, {col_left}), 0)"
+        return col_left
