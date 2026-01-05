@@ -1,0 +1,315 @@
+{
+  "run_id": "a84b9cc95f4c",
+  "created_at": 1767617366,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767617366,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 35,
+        "allowed_tables_preview": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.test"
+        ]
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767617366,
+      "payload": {
+        "kpis": [],
+        "dimensions": [],
+        "time_range": null,
+        "granularity": null,
+        "segments": [],
+        "filters": [],
+        "confidence": 0.4,
+        "notes": ""
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767617366,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767617367,
+      "payload": {
+        "candidate_tables": [],
+        "scoring": [
+          [
+            0,
+            "dbo.test"
+          ],
+          [
+            0,
+            "dbo.__EFMigrationsHistory"
+          ],
+          [
+            0,
+            "dbo.Users"
+          ],
+          [
+            0,
+            "dbo.SheeridVerification"
+          ],
+          [
+            0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          [
+            0,
+            "dbo.RewardsAccountQueryAuditLogs"
+          ],
+          [
+            0,
+            "dbo.RewardCampaigns"
+          ],
+          [
+            0,
+            "dbo.RewardCampaignCoupons"
+          ],
+          [
+            0,
+            "dbo.RewardCampaignActivityLogs"
+          ],
+          [
+            0,
+            "dbo.ProgramDetailsHistory"
+          ],
+          [
+            0,
+            "dbo.ProgramDetails"
+          ],
+          [
+            0,
+            "dbo.PersuadeRegistrationFailures"
+          ],
+          [
+            0,
+            "dbo.PMCDataProcessingActivityLog"
+          ],
+          [
+            0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            0,
+            "dbo.MppMemberEnrolls"
+          ],
+          [
+            0,
+            "dbo.Members_US"
+          ],
+          [
+            0,
+            "dbo.Members_02022024"
+          ],
+          [
+            0,
+            "dbo.Members"
+          ],
+          [
+            0,
+            "dbo.MemberPersuade"
+          ],
+          [
+            0,
+            "dbo.MemberOrders"
+          ]
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767617367,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767617367,
+      "payload": {
+        "note": "LLM unavailable; using fallback.",
+        "system": "You are a senior analytics planner. Output STRICT JSON only.\nIMPORTANT: You MUST only reference tables from candidate_tables and columns from schema.\nPlan JSON keys:\ntables (list of table keys), joins",
+        "user": "{'question': 'Create dashboard about users', 'intent': {'kpis': [], 'dimensions': [], 'time_range': None, 'granularity': None, 'segments': [], 'filters': [], 'confidence': 0.4, 'notes': ''}, 'candidat",
+        "tables": [],
+        "joins": [],
+        "metrics": [],
+        "dimensions": [],
+        "filters": [],
+        "visuals": [],
+        "query_cost_risk": "low",
+        "notes": "",
+        "expected_columns": [],
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767617367,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767617367,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.2,
+        "force_hitl": true,
+        "issues": [
+          "Plan missing tables."
+        ],
+        "recommendation": "Needs human review"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767617367,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.test"
+        ],
+        "proposed_plan": {
+          "note": "LLM unavailable; using fallback.",
+          "system": "You are a senior analytics planner. Output STRICT JSON only.\nIMPORTANT: You MUST only reference tables from candidate_tables and columns from schema.\nPlan JSON keys:\ntables (list of table keys), joins",
+          "user": "{'question': 'Create dashboard about users', 'intent': {'kpis': [], 'dimensions': [], 'time_range': None, 'granularity': None, 'segments': [], 'filters': [], 'confidence': 0.4, 'notes': ''}, 'candidat",
+          "tables": [],
+          "joins": [],
+          "metrics": [],
+          "dimensions": [],
+          "filters": [],
+          "visuals": [],
+          "query_cost_risk": "low",
+          "notes": "",
+          "expected_columns": [],
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [],
+          "dimensions": [],
+          "time_range": null,
+          "granularity": null,
+          "segments": [],
+          "filters": [],
+          "confidence": 0.4,
+          "notes": ""
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_granularity",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767617367,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767617367,
+      "node": "E_sql_generation",
+      "message": "No valid tables in plan after registry + allowlist validation.",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 169, in run_agentic_pipeline\n    sql_bundle = sql_agent.generate_sql(\n                 ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\sql_agent.py\", line 46, in generate_sql\n    raise ValueError(\"No valid tables in plan after registry + allowlist validation.\")\nValueError: No valid tables in plan after registry + allowlist validation.\n"
+    }
+  ]
+}
