@@ -1,0 +1,15 @@
+__pychache__/
+*.pyc
+.venv
+*.log
+.env
+.venv/
+venv
+.vscode/
+idea/
+DS_Store
+.ipynb_checkpoints/
+app_old.py
+db_old.py
+*_old.py
+virtual_env

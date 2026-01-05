@@ -1,0 +1,20 @@
+streamlit>=1.33.0
+pandas>=2.1.0
+numpy>=1.26.0
+
+SQLAlchemy>=2.0.0
+pyodbc>=5.1.0
+
+sqlparse>=0.5.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+
+duckdb>=1.0.0
+pyarrow>=15.0.0
+
+plotly>=5.18.0
+
+pytest>=8.0.0
+
+# Autogen (preferred orchestration)
+pyautogen[ollama]>=0.3.0

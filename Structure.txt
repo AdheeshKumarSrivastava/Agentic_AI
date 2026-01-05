@@ -1,0 +1,78 @@
+agentic_analytics_platform/
+  app.py
+  config.py
+  requirements.txt
+  .env.example
+  README.md
+
+  core/
+    __init__.py
+    orchestrator.py
+    run_pipeline.py
+
+  db/
+    __init__.py
+    engine.py
+    introspect.py
+
+  guards/
+    __init__.py
+    sql_safety.py
+
+  knowledge_graph/
+    __init__.py
+    store.py
+    schema_registry.py
+
+  agents/
+    __init__.py
+    schema_agent.py
+    planner_agent.py
+    sql_agent.py
+    executor.py
+    data_quality_agent.py
+    insight_agent.py
+    dashboard_agent.py
+    critique_agent.py
+
+  cache/
+    __init__.py
+    cache_manager.py
+
+  traces/
+    __init__.py
+    trace_store.py
+
+  observability/
+    __init__.py
+    logger.py
+    query_log.py
+    redaction.py
+    timing.py
+
+  ui/
+    __init__.py
+    pages.py
+    components.py
+    trace_viewer.py
+    schema_explorer.py
+    ask_analytics.py
+    query_logs_view.py
+    cache_manager_view.py
+    export_view.py
+
+  llm/
+    __init__.py
+    providers/
+      __init__.py
+      ollama_autogen.py
+      openai_placeholder.py
+
+  vendor/
+    plotly.min.js.placeholder.txt
+
+  tests/
+    __init__.py
+    test_sql_safety_guard.py
+    test_no_select_star.py
+    test_trace_store.py
