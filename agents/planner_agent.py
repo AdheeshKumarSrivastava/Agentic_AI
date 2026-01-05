@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
+from pathlib import Path
 import re
 
 from config import Settings
@@ -11,24 +12,42 @@ from core.orchestrator import build_orchestrator
 
 def _keywordize(text: str) -> List[str]:
     toks = re.findall(r"[a-zA-Z0-9_]+", (text or "").lower())
-    stop = {"the", "a", "an", "and", "or", "to", "of", "in", "for", "by", "with", "show", "give", "me", "create", "dashboard"}
+    stop = {
+        "the", "a", "an", "and", "or", "to", "of", "in", "for", "by", "with",
+        "show", "give", "me", "create", "dashboard", "plot", "chart", "trend",
+        "analysis", "report", "data", "details"
+    }
     return [t for t in toks if t not in stop and len(t) > 2]
+
+
+def _safe_str(x: Any) -> str:
+    try:
+        return str(x)
+    except Exception:
+        return ""
 
 
 class PlannerAgent:
     """
     Deterministic pipeline helper + LLM assisted planner.
     Never invents table/column names: we validate plan candidates against SchemaRegistry.
+
+    Updated:
+    - schema_reasoning() uses BOTH:
+      (1) schema registry (table + column names)
+      (2) content_index.json (sample rows + top values + content keywords)
     """
 
     def __init__(self, settings: Settings, kg: KnowledgeGraphStore, registry: SchemaRegistry):
         self.settings = settings
-        self.kg = kg
+        self.kg [self.kg] = kg
         self.registry = registry
         self.orch = build_orchestrator(settings.OLLAMA_BASE_URL, settings.OLLAMA_MODEL)
 
+    # -----------------------------
+    # A) Intent
+    # -----------------------------
     def extract_intent(self, user_question: str, allowed_tables: List[str]) -> Dict[str, Any]:
-        # LLM prompt but structured; fallback ok.
         system = (
             "You are an analytics intent extractor. Output STRICT JSON only.\n"
             "Do NOT invent table/column names.\n"
@@ -38,41 +57,167 @@ class PlannerAgent:
         user = f"Question: {user_question}\nAllowed tables: {allowed_tables}"
         res = self.orch.generate_json(system=system, user=user)
         raw = res.raw if isinstance(res.raw, dict) else {}
-        # Hard default
+
+        def _num(v: Any, default: float) -> float:
+            try:
+                return float(v)
+            except Exception:
+                return default
+
         intent = {
-            "kpis": raw.get("kpis", []),
-            "dimensions": raw.get("dimensions", []),
+            "kpis": raw.get("kpis", []) if isinstance(raw.get("kpis", []), list) else [],
+            "dimensions": raw.get("dimensions", []) if isinstance(raw.get("dimensions", []), list) else [],
             "time_range": raw.get("time_range"),
             "granularity": raw.get("granularity"),
-            "segments": raw.get("segments", []),
-            "filters": raw.get("filters", []),
-            "confidence": float(raw.get("confidence", 0.4)) if str(raw.get("confidence", "")).replace(".", "").isdigit() else 0.4,
-            "notes": raw.get("notes", ""),
+            "segments": raw.get("segments", []) if isinstance(raw.get("segments", []), list) else [],
+            "filters": raw.get("filters", []) if isinstance(raw.get("filters", []), list) else [],
+            "confidence": _num(raw.get("confidence", 0.4), 0.4),
+            "notes": raw.get("notes", "") if isinstance(raw.get("notes", ""), str) else "",
         }
         return intent
 
+    # -----------------------------
+    # B) Schema reasoning (UPDATED)
+    # -----------------------------
     def schema_reasoning(self, intent: Dict[str, Any], allowed_tables: List[str]) -> Dict[str, Any]:
-        # Deterministic matching: score tables by matching keywords to table/column names
+        """
+        Scores candidate tables using:
+        - table + column names
+        - content index: top values + sample rows + keyword blob
+        """
         reg = self.registry.load()
-        tables = [t for t in reg.get("tables", {}).keys() if (not allowed_tables or t in allowed_tables)]
-        q_words = set(_keywordize(" ".join(intent.get("kpis", []) + intent.get("dimensions", []) + intent.get("segments", []) + [intent.get("notes", "")])))
+        all_reg_tables = list(reg.get("tables", {}).keys())
 
-        scored = []
+        # allowlist enforcement (if user passed a subset)
+        tables = [t for t in all_reg_tables if (not allowed_tables or t in allowed_tables)]
+
+        # build query keywords from intent
+        q_text = " ".join(
+            (intent.get("kpis", []) or [])
+            + (intent.get("dimensions", []) or [])
+            + (intent.get("segments", []) or [])
+            + [intent.get("notes", "") or ""]
+        )
+        q_words = set(_keywordize(q_text))
+
+        # load content index
+        content_path = Path(self.settings.KNOWLEDGE_GRAPH_DIR) / "content_index.json"
+        content_obj: Dict[str, Any] = {}
+        try:
+            if content_path.exists():
+                import json
+                content_obj = json.loads(content_path.read_text(encoding="utf-8"))
+        except Exception:
+            content_obj = {}
+
+        content_tables: Dict[str, Any] = content_obj.get("tables", {}) if isinstance(content_obj, dict) else {}
+
+        scored: List[Tuple[float, str]] = []
+        breakdown: Dict[str, Any] = {}
+
         for t in tables:
-            cols = [c["name"].lower() for c in reg["tables"][t].get("columns", [])]
+            tmeta = reg["tables"].get(t, {})
+            cols = [c.get("name", "").lower() for c in (tmeta.get("columns", []) or []) if isinstance(c, dict)]
             tname = t.lower()
-            score = 0
+
+            # base score from schema names
+            schema_score = 0.0
+            matched_schema: List[str] = []
             for w in q_words:
                 if w in tname:
-                    score += 3
+                    schema_score += 3.0
+                    matched_schema.append(f"table:{w}")
                 if any(w in c for c in cols):
-                    score += 1
-            scored.append((score, t))
+                    schema_score += 1.0
+                    matched_schema.append(f"col:{w}")
 
-        scored.sort(reverse=True)
+            # content-based score (top values + sample rows + blob)
+            content_score = 0.0
+            matched_content: List[str] = []
+            ct = content_tables.get(t, {}) if isinstance(content_tables.get(t, {}), dict) else {}
+
+            # 1) keyword blob match
+            blob = ct.get("table_text", "")
+            if isinstance(blob, str) and blob:
+                for w in q_words:
+                    if w in blob:
+                        content_score += 1.5
+                        matched_content.append(f"blob:{w}")
+
+            # 2) top_values match (stronger signal)
+            top_vals = ct.get("top_values", {})
+            if isinstance(top_vals, dict):
+                for col, rows in top_vals.items():
+                    if not isinstance(rows, list):
+                        continue
+                    # check first N values
+                    for r in rows[:20]:
+                        v = _safe_str(r.get("value", "")).lower()
+                        if not v:
+                            continue
+                        for w in q_words:
+                            # substring match for entity tokens
+                            if w in v:
+                                content_score += 2.5
+                                matched_content.append(f"top:{col}:{w}")
+                                break
+
+            # 3) sample rows match (moderate signal)
+            samples = ct.get("sample_rows", [])
+            if isinstance(samples, list) and samples:
+                # concatenate a few rows into a small searchable string
+                sample_text_parts: List[str] = []
+                for row in samples[:10]:
+                    if isinstance(row, dict):
+                        for _, v in row.items():
+                            vs = _safe_str(v).lower()
+                            if vs and len(vs) <= 80:
+                                sample_text_parts.append(vs)
+                sample_text = " ".join(sample_text_parts)
+                for w in q_words:
+                    if w in sample_text:
+                        content_score += 1.0
+                        matched_content.append(f"sample:{w}")
+
+            # joinability hint (small bonus if pk/fk hints exist)
+            join_bonus = 0.0
+            hints = tmeta.get("pk_fk_hints", {})
+            if isinstance(hints, dict) and (hints.get("primary_keys") or hints.get("foreign_keys")):
+                join_bonus = 0.5
+
+            total = schema_score + content_score + join_bonus
+
+            breakdown[t] = {
+                "total_score": round(total, 3),
+                "schema_score": round(schema_score, 3),
+                "content_score": round(content_score, 3),
+                "join_bonus": round(join_bonus, 3),
+                "matched_schema": matched_schema[:30],
+                "matched_content": matched_content[:40],
+                "row_count": int(tmeta.get("row_count", 0) or 0),
+                "has_content_index": bool(ct),
+            }
+
+            scored.append((total, t))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+
+        # Take top candidates; keep only > 0 unless nothing matches
         top = [t for s, t in scored if s > 0][:12]
-        return {"candidate_tables": top, "scoring": scored[:20]}
+        if not top:
+            top = [t for _, t in scored[:8]]  # fallback: best available tables
 
+        return {
+            "candidate_tables": top,
+            "scoring_top": [(round(s, 3), t) for s, t in scored[:30]],
+            "score_breakdown": {t: breakdown[t] for t in top if t in breakdown},
+            "used_content_index": bool(content_tables),
+            "query_keywords": sorted(list(q_words))[:80],
+        }
+
+    # -----------------------------
+    # C) Plan
+    # -----------------------------
     def build_plan(
         self,
         user_question: str,
@@ -85,48 +230,60 @@ class PlannerAgent:
         if allowed_tables:
             candidates = [t for t in candidates if t in allowed_tables]
 
-        # Ask LLM to propose plan using only candidate tables.
         system = (
             "You are a senior analytics planner. Output STRICT JSON only.\n"
             "IMPORTANT: You MUST only reference tables from candidate_tables and columns from schema.\n"
             "Plan JSON keys:\n"
             "tables (list of table keys), joins (list of {left_table,right_table,left_key,right_key,join_type}),\n"
-            "metrics (list of {name, expr, depends_on}), dimensions (list), filters (list),\n"
-            "time_field (string|null), time_granularity (string|null), visuals (list of {type,title,x,y,color,agg}),\n"
+            "metrics (list of {name, agg, field, depends_on}), dimensions (list), filters (list),\n"
+            "time_field (string|null), time_grain (string|null), order_by (list of {field, dir}),\n"
+            "visuals (list of {type,title,x,y,color,agg}),\n"
             "expected_columns (list), query_cost_risk (low|medium|high), notes.\n"
+            "Rules:\n"
+            "- Do NOT use SELECT *.\n"
+            "- Prefer aggregated metrics with dimensions when user asks trend/summary.\n"
+            "- Keep minimal set of tables/joins.\n"
         )
+
         user = {
             "question": user_question,
             "intent": intent,
             "candidate_tables": candidates,
             "schema_registry_tables": {t: reg["tables"][t] for t in candidates if t in reg["tables"]},
         }
+
         res = self.orch.generate_json(system=system, user=str(user))
         plan = res.raw if isinstance(res.raw, dict) else {}
 
-        # Validate: tables must exist and be allowed
+        # Validate tables
         plan_tables = [t for t in plan.get("tables", []) if isinstance(t, str)]
         plan_tables = [t for t in plan_tables if t in reg.get("tables", {})]
         if allowed_tables:
             plan_tables = [t for t in plan_tables if t in allowed_tables]
 
-        # If LLM failed, fallback to deterministic plan
         if not plan_tables:
             plan_tables = candidates[:2]
 
         plan["tables"] = plan_tables
 
-        # Ensure expected_columns are explicit and valid; if missing, set later in SQLAgent
+        # Ensure keys exist
         plan.setdefault("joins", [])
         plan.setdefault("metrics", [])
         plan.setdefault("dimensions", [])
         plan.setdefault("filters", [])
         plan.setdefault("visuals", [])
+        plan.setdefault("order_by", [])
+        plan.setdefault("time_field", None)
+        plan.setdefault("time_grain", intent.get("granularity"))
         plan.setdefault("query_cost_risk", self._estimate_cost_risk(plan_tables))
         plan.setdefault("notes", "")
         plan.setdefault("expected_columns", [])
+
         return plan
 
+    # -----------------------------
+    # HITL
+    # -----------------------------
     def build_human_review_packet(self, plan: Dict[str, Any], intent: Dict[str, Any], allowed_tables: List[str]) -> Dict[str, Any]:
         return {
             "mode": "E_HUMAN_REVIEW",
@@ -146,7 +303,8 @@ class PlannerAgent:
                 "plan.dimensions",
                 "plan.filters",
                 "plan.time_field",
-                "plan.time_granularity",
+                "plan.time_grain",
+                "plan.order_by",
                 "plan.visuals",
             ],
             "edit_schema": {
@@ -156,17 +314,14 @@ class PlannerAgent:
         }
 
     def apply_human_review(self, plan: Dict[str, Any], review: Dict[str, Any], allowed_tables: List[str]) -> Dict[str, Any]:
-        # Apply only explicit fields
         new_allowed = allowed_tables
         if isinstance(review.get("allowed_tables"), list):
             new_allowed = [str(x) for x in review["allowed_tables"]]
 
         if isinstance(review.get("plan"), dict):
-            # Replace only keys present
             for k, v in review["plan"].items():
                 plan[k] = v
 
-        # Validate against registry
         reg = self.registry.load()
         plan_tables = [t for t in plan.get("tables", []) if t in reg.get("tables", {})]
         if new_allowed:
@@ -175,12 +330,14 @@ class PlannerAgent:
 
         return {"ok": True, "allowed_tables": new_allowed, "plan": plan}
 
+    # -----------------------------
+    # cost heuristic
+    # -----------------------------
     def _estimate_cost_risk(self, tables: List[str]) -> str:
         reg = self.registry.load().get("tables", {})
         rows = [int(reg.get(t, {}).get("row_count", 0) or 0) for t in tables]
         if not rows:
             return "low"
-        # simple heuristic
         total = 1
         for r in rows[:3]:
             total *= max(r, 1)
