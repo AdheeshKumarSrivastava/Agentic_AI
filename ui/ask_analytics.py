@@ -127,82 +127,72 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     )
     st.session_state["question_tmp"] = question
 
-    # -----------------------------
-    # 2) Table selection + suggestion
-    # -----------------------------
+    # ------------------------------------------------------------
+    # 2) Table selection + suggestions (STREAMLIT SAFE)
+    # ------------------------------------------------------------
     st.divider()
     st.subheader("2) Table Selection (You control the final allowlist)")
+
+    # ---- Apply pending allowlist BEFORE widget ----
+    if "pending_allowed_tables" in st.session_state:
+        st.session_state["allowed_tables_picker"] = st.session_state.pop("pending_allowed_tables")
 
     col1, col2 = st.columns([1, 1], gap="large")
 
     with col1:
         st.caption("Current allowlist (agents will only use these tables)")
 
-        # IMPORTANT:
-        # - Widget key is allowed_tables_picker
-        # - We NEVER mutate st.session_state["allowed_tables_picker"] AFTER widget is created.
         allowed_tables = st.multiselect(
             "Allowed tables",
             options=all_tables,
             key="allowed_tables_picker",
-            help="Agents can only read these tables. Use Suggest to narrow down quickly.",
         )
 
-        # Persist canonical allowlist
+        # Canonical copy
         st.session_state["allowed_tables"] = list(allowed_tables)
 
         a, b, c = st.columns([1, 1, 2])
         with a:
             if st.button("Reset to ALL", use_container_width=True):
-                _apply_allowlist(all_tables)
-                _reset_suggestions()
+                st.session_state["pending_allowed_tables"] = list(all_tables)
                 st.rerun()
 
         with b:
             if st.button("Clear", use_container_width=True):
-                _apply_allowlist([])
+                st.session_state["pending_allowed_tables"] = []
                 st.rerun()
 
         with c:
             st.write(f"Selected: **{len(allowed_tables)}** / {len(all_tables)}")
 
     with col2:
-        st.caption("Agent suggestion (uses schema + content index, if available)")
+        st.caption("Agent suggestion")
 
-        s1, s2 = st.columns([1, 1])
-        with s1:
-            if st.button("Suggest from question", type="secondary", use_container_width=True):
-                if not question.strip():
-                    st.error("Type a question first.")
-                else:
-                    with st.spinner("Analyzing question and matching tables..."):
-                        _suggest_tables(settings, kg, registry, question)
-                    st.rerun()
-
-        with s2:
-            if st.button("Reset suggestion", use_container_width=True):
-                _reset_suggestions()
+        if st.button("Suggest from question"):
+            if not question.strip():
+                st.error("Type a question first.")
+            else:
+                intent = planner.extract_intent(question, allowed_tables=all_tables)
+                reasoning = planner.schema_reasoning(intent, allowed_tables=all_tables)
+                st.session_state["suggested_tables"] = reasoning.get("candidate_tables", [])
+                st.session_state["suggested_intent"] = intent
+                st.session_state["suggested_reasoning"] = reasoning
                 st.rerun()
 
-        suggested = st.session_state.get("suggested_tables", []) or []
+        suggested = st.session_state.get("suggested_tables", [])
         if suggested:
-            st.success(f"Suggested **{len(suggested)}** tables:")
+            st.success(f"Suggested {len(suggested)} tables")
             st.write(suggested)
 
-            if st.button("Apply suggested as allowlist", type="primary", use_container_width=True):
-                _apply_allowlist(suggested)
+            if st.button("Apply suggested as allowlist", type="primary"):
+                st.session_state["pending_allowed_tables"] = list(suggested)
                 st.rerun()
 
-            with st.expander("Show suggestion details (intent + scoring)"):
-                st.json(
-                    {
-                        "intent": st.session_state.get("suggested_intent", {}),
-                        "schema_reasoning": st.session_state.get("suggested_reasoning", {}),
-                    }
-                )
-        else:
-            st.info ("Click **Suggest from question** to get table recommendations.")
-
+            if st.button("Reset suggestion"):
+                st.session_state.pop("suggested_tables", None)
+                st.session_state.pop("suggested_intent", None)
+                st.session_state.pop("suggested_reasoning", None)
+                st.rerun()
     # -----------------------------
     # Large Query Mode (MUST be widget-owned)
     # -----------------------------
@@ -297,7 +287,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     if status in ("failed", "rejected", "failed_data_quality"):
         st.error(result.get("error") or result.get("rejection") or result.get("data_quality") or "Unknown error")
-        st.info [st.info]("Open **Run Traces** to see node outputs & errors.")
+        st.info ("Open **Run Traces** to see node outputs & errors.")
         if developer_mode:
             st.subheader("Developer dump")
             st.json(result)
