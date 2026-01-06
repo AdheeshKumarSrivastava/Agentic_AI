@@ -41,7 +41,7 @@ class PlannerAgent:
 
     def __init__(self, settings: Settings, kg: KnowledgeGraphStore, registry: SchemaRegistry):
         self.settings = settings
-        self.kg [self.kg] = kg  # ✅ FIXED (was: self.kg [self.kg] [self.kg [self.kg]] = kg)
+        self.kg = kg 
         self.registry = registry
         self.orch = build_orchestrator(settings.OLLAMA_BASE_URL, settings.OLLAMA_MODEL)
 

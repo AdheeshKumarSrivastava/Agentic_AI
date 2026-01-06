@@ -19,7 +19,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     registry = SchemaRegistry(settings.KNOWLEDGE_GRAPH_DIR)
 
     schema = kg.load_schema()
-    all_tables = sorted(schema.get("tables", {}).keys())
+    all_tables = sorted((schema.get("tables") or {}).keys())
     if not all_tables:
         st.warning("Schema not available yet. (Auto bootstrap should run.)")
         return
@@ -28,10 +28,13 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # Session defaults
     # ------------------------------------------------------------
     if "allowed_tables" not in st.session_state:
-        st.session_state["allowed_tables"] = all_tables
+        st.session_state["allowed_tables"] = list(all_tables)
 
     if "large_mode" not in st.session_state:
         st.session_state["large_mode"] = True
+
+    if "question_tmp" not in st.session_state:
+        st.session_state["question_tmp"] = ""
 
     if "last_result" not in st.session_state:
         st.session_state["last_result"] = None
@@ -42,7 +45,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     st.subheader("1) Ask your question")
     question = st.text_area(
         "Business question",
-        value=st.session_state.get("question_tmp", ""),
+        value=st.session_state["question_tmp"],
         height=90,
         placeholder="e.g., Create a dashboard for weekly revenue trend by region and top customers.",
     )
@@ -56,27 +59,23 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     planner = PlannerAgent(settings=settings, kg=kg, registry=registry)
 
-    # ✅ Apply pending updates BEFORE widget instantiation (Streamlit requirement)
-    if "pending_allowed_tables" in st.session_state:
-        st.session_state["allowed_tables"] = st.session_state.pop("pending_allowed_tables")
-
     col1, col2 = st.columns([1, 1])
 
     with col1:
         st.caption("Current allowlist (agents will only use these)")
 
-        # No widget-key mutation after instantiation:
+        # ✅ Canonical key = "allowed_tables"
         allowed_tables = st.multiselect(
             "Allowed tables",
             options=all_tables,
-            default=st.session_state.get("allowed_tables", all_tables),
-            key="allowed_tables_picker",
+            key="allowed_tables",
+            help="Agents can only use the tables selected here.",
         )
 
         c1, c2 = st.columns([1, 1])
         with c1:
             if st.button("Reset allowlist to ALL tables"):
-                st.session_state["pending_allowed_tables"] = all_tables
+                st.session_state["allowed_tables"] = list(all_tables)
                 st.rerun()
 
         with c2:
@@ -89,7 +88,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
             if not question.strip():
                 st.error("Type a question first.")
             else:
-                # Suggest from full schema (not current allowlist) so user can discover missing tables.
+                # Suggest from full schema (not current allowlist)
                 intent = planner.extract_intent(question, allowed_tables=all_tables)
                 reasoning = planner.schema_reasoning(intent=intent, allowed_tables=all_tables)
 
@@ -103,7 +102,8 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
             st.write(suggested)
 
             if st.button("Apply suggested tables as allowlist", type="primary"):
-                st.session_state["pending_allowed_tables"] = suggested
+                # ✅ Update the SAME widget key
+                st.session_state["allowed_tables"] = list(suggested)
                 st.rerun()
 
             with st.expander("Show suggestion details (intent + scoring)"):
@@ -114,16 +114,13 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
                     }
                 )
 
-    # Persist final allowlist from widget to session state
-    st.session_state["allowed_tables"] = allowed_tables
-
     # ------------------------------------------------------------
-    # Large Query Mode (passed to pipeline only if your run_pipeline supports it)
+    # Large Query Mode (must match run_agentic_pipeline signature)
     # ------------------------------------------------------------
     st.session_state["large_mode"] = st.toggle(
         "Large Query Mode (use MAX_RETURNED_ROWS)",
-        value=bool(st.session_state["large_mode"]),
-        help="ON: SQLAgent should use TOP(MAX_RETURNED_ROWS). OFF: uses TOP(DEFAULT_EXPLORATORY_TOP).",
+        key="large_mode",
+        help="ON: SQLAgent uses TOP(MAX_RETURNED_ROWS). OFF: uses TOP(DEFAULT_EXPLORATORY_TOP).",
     )
 
     # ------------------------------------------------------------
@@ -137,16 +134,15 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     if run_btn:
         run_id = trace_store.new_run()
 
-        # ⚠️ If your run_agentic_pipeline signature does NOT include large_mode,
-        # remove it from the call below to avoid TypeError.
         result = run_agentic_pipeline(
             settings=settings,
             trace_store=trace_store,
             run_id=run_id,
             user_question=question,
-            allowed_tables=allowed_tables,
+            allowed_tables=st.session_state["allowed_tables"],
             human_review=None,
             developer_mode=developer_mode,
+            large_mode=bool(st.session_state["large_mode"]),  # ✅ FIX
         )
 
         st.session_state["last_result"] = result
@@ -156,7 +152,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # ------------------------------------------------------------
     result = st.session_state.get("last_result")
     if not result:
-        st.info("Run the pipeline to generate plan + dashboard.")
+        st.info [st.info]("Run the pipeline to generate plan + dashboard.")
         return
 
     status = result.get("status")
@@ -168,7 +164,12 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
         st.json(packet)
 
         st.subheader("Provide explicit edits (JSON)")
-        default_edit = {"allowed_tables": allowed_tables, "plan": packet.get("proposed_plan", {})}
+        default_edit = {
+            "allowed_tables": st.session_state["allowed_tables"],
+            "plan": packet.get("proposed_plan", {}),
+            # Optional: allow user to override large_mode during HITL
+            # "large_mode": bool(st.session_state["large_mode"]),
+        }
         edit_text = st.text_area("Edits JSON", value=json.dumps(default_edit, indent=2), height=260)
 
         if st.button("Approve & Continue", type="primary"):
@@ -184,9 +185,10 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
                 trace_store=trace_store,
                 run_id=run_id,
                 user_question=question,
-                allowed_tables=allowed_tables,
+                allowed_tables=st.session_state["allowed_tables"],
                 human_review=human_review,
                 developer_mode=developer_mode,
+                large_mode=bool(st.session_state["large_mode"]),  # ✅ FIX
             )
             st.session_state["last_result"] = result2
             result = result2
@@ -194,7 +196,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
 
     if status in ("failed", "rejected", "failed_data_quality"):
         st.error(result.get("error") or result.get("rejection") or result.get("data_quality"))
-        st.info("Open **Run Traces** to see node outputs & errors.")
+        st.info [st.info]("Open **Run Traces** to see node outputs & errors.")
         return
 
     if status == "success":
@@ -208,7 +210,6 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
         else:
             st.warning("Dashboard HTML missing.")
 
-        # Download dashboard HTML
         if html:
             st.download_button(
                 "Download Dashboard HTML",
@@ -224,6 +225,6 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
                     "sql": result.get("sql"),
                     "exec_meta": result.get("exec_meta"),
                     "large_mode": bool(st.session_state["large_mode"]),
-                    "allowed_tables_count": len(allowed_tables),
+                    "allowed_tables_count": len(st.session_state["allowed_tables"]),
                 }
             )
