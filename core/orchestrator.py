@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Callable
+import importlib.util
 
 
 @dataclass
@@ -21,13 +22,19 @@ class FallbackOrchestrator(BaseOrchestrator):
     Keeps pipeline alive without crashing.
     """
 
-    def __init__(self, deterministic_fn: Optional[Callable[[str, str], Dict[str, Any]]] = None):
+    def __init__(
+        self,
+        deterministic_fn: Optional[Callable[[str, str], Dict[str, Any]]] = None,
+        reason: str = "LLM unavailable",
+    ):
         self.fn = deterministic_fn
+        self.reason = reason
 
     def generate_json(self, system: str, user: str) -> OrchestratorResult:
         if self.fn is None:
             raw = {
-                "note": "LLM unavailable; using fallback.",
+                "note": "FallbackOrchestrator",
+                "reason": self.reason,
                 "system_preview": (system or "")[:200],
                 "user_preview": (user or "")[:200],
             }
@@ -39,12 +46,12 @@ class FallbackOrchestrator(BaseOrchestrator):
 
 class AutogenOrchestrator(BaseOrchestrator):
     """
-    Uses Autogen + Ollama.
-    Import of AutogenOllamaClient is LAZY to avoid circular imports.
+    Uses pyautogen with Ollama via AutogenOllamaClient.
+    Everything is lazy-imported to avoid circular imports at module load time.
     """
 
     def __init__(self, ollama_base_url: str, model: str):
-        # ✅ Lazy import avoids circular imports + avoids import error at module import time
+        # Lazy import to avoid circular import issues
         from llm.providers.ollama_autogen import AutogenOllamaClient
 
         self.client = AutogenOllamaClient(ollama_base_url=ollama_base_url, model=model)
@@ -55,14 +62,25 @@ class AutogenOrchestrator(BaseOrchestrator):
 
 def build_orchestrator(ollama_base_url: str, model: str) -> BaseOrchestrator:
     """
-    Try Autogen; if unavailable, fallback.
-    Never crash app import-time.
+    Attempts Autogen first. If not available, returns fallback with explicit reason.
+    Never crashes import-time.
     """
+
+    # 1) Detect obvious shadowing / missing dependency
+    spec = importlib.util.find_spec("autogen")
+    if spec is None:
+        return FallbackOrchestrator(
+            reason=(
+                "Python package 'autogen' not found. "
+                "Install it OR ensure you did not shadow it with a local 'autogen.py' or 'autogen/' folder."
+            )
+        )
+
+    # 2) Try creating the real orchestrator (may still fail if autogen is incompatible)
     try:
-        # Some environments have 'autogen' import, others don't.
-        # We only need to know if it's importable.
+        # Import inside try to avoid hard failure
         import autogen  # noqa: F401
 
         return AutogenOrchestrator(ollama_base_url=ollama_base_url, model=model)
-    except Exception:
-        return FallbackOrchestrator()
+    except Exception as e:
+        return FallbackOrchestrator(reason=f"Autogen init failed: {type(e).__name__}: {e}")

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 import re
+import json
 
 from config import Settings
 from knowledge_graph.store import KnowledgeGraphStore
@@ -40,7 +41,7 @@ class PlannerAgent:
 
     def __init__(self, settings: Settings, kg: KnowledgeGraphStore, registry: SchemaRegistry):
         self.settings = settings
-        self.kg [self.kg] = kg
+        self.kg [self.kg] = kg  # ✅ FIXED (was: self.kg [self.kg] [self.kg [self.kg]] = kg)
         self.registry = registry
         self.orch = build_orchestrator(settings.OLLAMA_BASE_URL, settings.OLLAMA_MODEL)
 
@@ -77,18 +78,18 @@ class PlannerAgent:
         return intent
 
     # -----------------------------
-    # B) Schema reasoning (UPDATED)
+    # B) Schema reasoning (content-aware)
     # -----------------------------
     def schema_reasoning(self, intent: Dict[str, Any], allowed_tables: List[str]) -> Dict[str, Any]:
         """
         Scores candidate tables using:
-        - table + column names
+        - table + column names (schema)
         - content index: top values + sample rows + keyword blob
         """
         reg = self.registry.load()
         all_reg_tables = list(reg.get("tables", {}).keys())
 
-        # allowlist enforcement (if user passed a subset)
+        # allowlist enforcement
         tables = [t for t in all_reg_tables if (not allowed_tables or t in allowed_tables)]
 
         # build query keywords from intent
@@ -105,22 +106,27 @@ class PlannerAgent:
         content_obj: Dict[str, Any] = {}
         try:
             if content_path.exists():
-                import json
                 content_obj = json.loads(content_path.read_text(encoding="utf-8"))
         except Exception:
             content_obj = {}
 
-        content_tables: Dict[str, Any] = content_obj.get("tables", {}) if isinstance(content_obj, dict) else {}
+        content_tables: Dict[str, Any] = {}
+        if isinstance(content_obj, dict) and isinstance(content_obj.get("tables"), dict):
+            content_tables = content_obj["tables"]
 
         scored: List[Tuple[float, str]] = []
         breakdown: Dict[str, Any] = {}
 
         for t in tables:
-            tmeta = reg["tables"].get(t, {})
-            cols = [c.get("name", "").lower() for c in (tmeta.get("columns", []) or []) if isinstance(c, dict)]
-            tname = t.lower()
+            tmeta = reg.get("tables", {}).get(t, {}) if isinstance(reg, dict) else {}
+            cols = [
+                (c.get("name", "") or "").lower()
+                for c in (tmeta.get("columns", []) or [])
+                if isinstance(c, dict)
+            ]
+            tname = (t or "").lower()
 
-            # base score from schema names
+            # schema score
             schema_score = 0.0
             matched_schema: List[str] = []
             for w in q_words:
@@ -131,55 +137,56 @@ class PlannerAgent:
                     schema_score += 1.0
                     matched_schema.append(f"col:{w}")
 
-            # content-based score (top values + sample rows + blob)
+            # content score
             content_score = 0.0
             matched_content: List[str] = []
+
             ct = content_tables.get(t, {}) if isinstance(content_tables.get(t, {}), dict) else {}
 
-            # 1) keyword blob match
+            # 1) keyword blob
             blob = ct.get("table_text", "")
             if isinstance(blob, str) and blob:
+                blob_l = blob.lower()
                 for w in q_words:
-                    if w in blob:
+                    if w in blob_l:
                         content_score += 1.5
                         matched_content.append(f"blob:{w}")
 
-            # 2) top_values match (stronger signal)
+            # 2) top values
             top_vals = ct.get("top_values", {})
             if isinstance(top_vals, dict):
                 for col, rows in top_vals.items():
                     if not isinstance(rows, list):
                         continue
-                    # check first N values
                     for r in rows[:20]:
+                        if not isinstance(r, dict):
+                            continue
                         v = _safe_str(r.get("value", "")).lower()
                         if not v:
                             continue
                         for w in q_words:
-                            # substring match for entity tokens
                             if w in v:
                                 content_score += 2.5
                                 matched_content.append(f"top:{col}:{w}")
                                 break
 
-            # 3) sample rows match (moderate signal)
+            # 3) sample rows
             samples = ct.get("sample_rows", [])
             if isinstance(samples, list) and samples:
-                # concatenate a few rows into a small searchable string
-                sample_text_parts: List[str] = []
+                parts: List[str] = []
                 for row in samples[:10]:
                     if isinstance(row, dict):
                         for _, v in row.items():
                             vs = _safe_str(v).lower()
                             if vs and len(vs) <= 80:
-                                sample_text_parts.append(vs)
-                sample_text = " ".join(sample_text_parts)
+                                parts.append(vs)
+                sample_text = " ".join(parts)
                 for w in q_words:
                     if w in sample_text:
                         content_score += 1.0
                         matched_content.append(f"sample:{w}")
 
-            # joinability hint (small bonus if pk/fk hints exist)
+            # joinability bonus
             join_bonus = 0.0
             hints = tmeta.get("pk_fk_hints", {})
             if isinstance(hints, dict) and (hints.get("primary_keys") or hints.get("foreign_keys")):
@@ -202,10 +209,9 @@ class PlannerAgent:
 
         scored.sort(key=lambda x: x[0], reverse=True)
 
-        # Take top candidates; keep only > 0 unless nothing matches
         top = [t for s, t in scored if s > 0][:12]
         if not top:
-            top = [t for _, t in scored[:8]]  # fallback: best available tables
+            top = [t for _, t in scored[:8]]
 
         return {
             "candidate_tables": top,
@@ -249,13 +255,12 @@ class PlannerAgent:
             "question": user_question,
             "intent": intent,
             "candidate_tables": candidates,
-            "schema_registry_tables": {t: reg["tables"][t] for t in candidates if t in reg["tables"]},
+            "schema_registry_tables": {t: reg["tables"][t] for t in candidates if t in reg.get("tables", {})},
         }
 
         res = self.orch.generate_json(system=system, user=str(user))
         plan = res.raw if isinstance(res.raw, dict) else {}
 
-        # Validate tables
         plan_tables = [t for t in plan.get("tables", []) if isinstance(t, str)]
         plan_tables = [t for t in plan_tables if t in reg.get("tables", {})]
         if allowed_tables:
@@ -266,7 +271,6 @@ class PlannerAgent:
 
         plan["tables"] = plan_tables
 
-        # Ensure keys exist
         plan.setdefault("joins", [])
         plan.setdefault("metrics", [])
         plan.setdefault("dimensions", [])
@@ -278,7 +282,6 @@ class PlannerAgent:
         plan.setdefault("query_cost_risk", self._estimate_cost_risk(plan_tables))
         plan.setdefault("notes", "")
         plan.setdefault("expected_columns", [])
-
         return plan
 
     # -----------------------------
