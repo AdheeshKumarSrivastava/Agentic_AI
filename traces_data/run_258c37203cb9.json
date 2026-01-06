@@ -1,0 +1,640 @@
+{
+  "run_id": "258c37203cb9",
+  "created_at": 1767688502,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767688503,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 12,
+        "allowed_tables_preview": [
+          "dbo.MemberOrders",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MemberPersuade",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.OptOutMembers",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaigns",
+          "dbo.MBPMemberCouponData",
+          "dbo.ProgramDetails"
+        ]
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767688676,
+      "payload": {
+        "kpis": [
+          "total_revenue",
+          "new_members",
+          "member_retention_rate",
+          "average_order_value",
+          "campaign_conversion_rate"
+        ],
+        "dimensions": [
+          "country",
+          "program_type",
+          "source_of_traffic",
+          "member_segment"
+        ],
+        "time_range": null,
+        "granularity": null,
+        "segments": [
+          "new_members",
+          "loyal_members",
+          "inactive_members"
+        ],
+        "filters": [
+          {
+            "field": "country",
+            "op": "=",
+            "value": "US"
+          },
+          {
+            "field": "program_type",
+            "op": "IN",
+            "value": [
+              "premium",
+              "standard"
+            ]
+          }
+        ],
+        "confidence": 0.95,
+        "notes": "Include quarterly trends and year-over-year comparisons."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767688676,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767688676,
+      "payload": {
+        "candidate_tables": [
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.Members",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.MemberOrders",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.OptOutMembers",
+          "dbo.RewardCampaigns"
+        ],
+        "scoring_top": [
+          [
+            2.0,
+            "dbo.ProgramDetails"
+          ],
+          [
+            2.0,
+            "dbo.ProgramDetailsHistory"
+          ],
+          [
+            1.5,
+            "dbo.Members"
+          ],
+          [
+            1.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            1.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            1.0,
+            "dbo.MemberOrders"
+          ],
+          [
+            1.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            1.0,
+            "dbo.Members_US"
+          ],
+          [
+            1.0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            1.0,
+            "dbo.RewardCampaigns"
+          ],
+          [
+            0.0,
+            "dbo.MBPMemberCouponData"
+          ],
+          [
+            0.0,
+            "dbo.MemberPersuade"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.ProgramDetails": {
+            "total_score": 2.0,
+            "schema_score": 2.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:include",
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 15,
+            "has_content_index": false
+          },
+          "dbo.ProgramDetailsHistory": {
+            "total_score": 2.0,
+            "schema_score": 2.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:include",
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 0,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 1.5,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 10702,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 1413172,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers_US": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 812900,
+            "has_content_index": false
+          },
+          "dbo.MemberOrders": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 41245,
+            "has_content_index": false
+          },
+          "dbo.Members_02022024": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 18593823,
+            "has_content_index": false
+          },
+          "dbo.Members_US": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 5767824,
+            "has_content_index": false
+          },
+          "dbo.OptOutMembers": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 2251,
+            "has_content_index": false
+          },
+          "dbo.RewardCampaigns": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:country"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "average_order_value",
+          "campaign_conversion_rate",
+          "comparisons",
+          "country",
+          "inactive_members",
+          "include",
+          "loyal_members",
+          "member_retention_rate",
+          "member_segment",
+          "new_members",
+          "over",
+          "program_type",
+          "quarterly",
+          "source_of_traffic",
+          "total_revenue",
+          "trends",
+          "year"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767688676,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767689745,
+      "payload": {
+        "tables": [
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory"
+        ],
+        "joins": [
+          {
+            "left_table": "OptOutMembers",
+            "right_table": "RewardCampaigns",
+            "left_key": "ProfileId",
+            "right_key": "DellBenefitId",
+            "join_type": "LEFT"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "TotalOptOutMembers",
+            "agg": "COUNT",
+            "field": "OptOutMembers.Id",
+            "depends_on": null
+          },
+          {
+            "name": "ActiveCampaigns",
+            "agg": "COUNT",
+            "field": "RewardCampaigns.CampaignId",
+            "depends_on": null
+          }
+        ],
+        "dimensions": [
+          "OptOutMembers.Country",
+          "OptOutMembers.Feedback",
+          "OptOutMembers.Reason",
+          "RewardCampaigns.CampaignName",
+          "RewardCampaigns.StartDate",
+          "RewardCampaigns.EndDate"
+        ],
+        "filters": [
+          {
+            "field": "OptOutMembers.LastUpdated",
+            "operator": ">",
+            "value": "2023-10-01T00:00:00Z"
+          },
+          {
+            "field": "RewardCampaigns.IsActive",
+            "operator": "=",
+            "value": 1
+          }
+        ],
+        "time_field": "OptOutMembers.LastUpdated",
+        "time_grain": null,
+        "order_by": [
+          {
+            "field": "OptOutMembers.LastUpdated",
+            "dir": "DESC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "bar_chart",
+            "title": "Active Campaigns by Country",
+            "x": "OptOutMembers.Country",
+            "y": "ActiveCampaigns",
+            "color": "RewardCampaigns.CampaignName"
+          }
+        ],
+        "expected_columns": [
+          "OptOutMembers.Id",
+          "OptOutMembers.ProfileId",
+          "OptOutMembers.LastUpdated",
+          "OptOutMembers.Country",
+          "OptOutMembers.Feedback",
+          "OptOutMembers.Reason",
+          "RewardCampaigns.CampaignName",
+          "RewardCampaigns.StartDate",
+          "RewardCampaigns.EndDate"
+        ],
+        "query_cost_risk": "low",
+        "notes": null,
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767689745,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767689745,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767689745,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.MemberOrders",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MemberPersuade",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.OptOutMembers",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaigns",
+          "dbo.MBPMemberCouponData",
+          "dbo.ProgramDetails"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.ProgramDetails",
+            "dbo.ProgramDetailsHistory"
+          ],
+          "joins": [
+            {
+              "left_table": "OptOutMembers",
+              "right_table": "RewardCampaigns",
+              "left_key": "ProfileId",
+              "right_key": "DellBenefitId",
+              "join_type": "LEFT"
+            }
+          ],
+          "metrics": [
+            {
+              "name": "TotalOptOutMembers",
+              "agg": "COUNT",
+              "field": "OptOutMembers.Id",
+              "depends_on": null
+            },
+            {
+              "name": "ActiveCampaigns",
+              "agg": "COUNT",
+              "field": "RewardCampaigns.CampaignId",
+              "depends_on": null
+            }
+          ],
+          "dimensions": [
+            "OptOutMembers.Country",
+            "OptOutMembers.Feedback",
+            "OptOutMembers.Reason",
+            "RewardCampaigns.CampaignName",
+            "RewardCampaigns.StartDate",
+            "RewardCampaigns.EndDate"
+          ],
+          "filters": [
+            {
+              "field": "OptOutMembers.LastUpdated",
+              "operator": ">",
+              "value": "2023-10-01T00:00:00Z"
+            },
+            {
+              "field": "RewardCampaigns.IsActive",
+              "operator": "=",
+              "value": 1
+            }
+          ],
+          "time_field": "OptOutMembers.LastUpdated",
+          "time_grain": null,
+          "order_by": [
+            {
+              "field": "OptOutMembers.LastUpdated",
+              "dir": "DESC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "bar_chart",
+              "title": "Active Campaigns by Country",
+              "x": "OptOutMembers.Country",
+              "y": "ActiveCampaigns",
+              "color": "RewardCampaigns.CampaignName"
+            }
+          ],
+          "expected_columns": [
+            "OptOutMembers.Id",
+            "OptOutMembers.ProfileId",
+            "OptOutMembers.LastUpdated",
+            "OptOutMembers.Country",
+            "OptOutMembers.Feedback",
+            "OptOutMembers.Reason",
+            "RewardCampaigns.CampaignName",
+            "RewardCampaigns.StartDate",
+            "RewardCampaigns.EndDate"
+          ],
+          "query_cost_risk": "low",
+          "notes": null,
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [
+            "total_revenue",
+            "new_members",
+            "member_retention_rate",
+            "average_order_value",
+            "campaign_conversion_rate"
+          ],
+          "dimensions": [
+            "country",
+            "program_type",
+            "source_of_traffic",
+            "member_segment"
+          ],
+          "time_range": null,
+          "granularity": null,
+          "segments": [
+            "new_members",
+            "loyal_members",
+            "inactive_members"
+          ],
+          "filters": [
+            {
+              "field": "country",
+              "op": "=",
+              "value": "US"
+            },
+            {
+              "field": "program_type",
+              "op": "IN",
+              "value": [
+                "premium",
+                "standard"
+              ]
+            }
+          ],
+          "confidence": 0.95,
+          "notes": "Include quarterly trends and year-over-year comparisons."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767689745,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767689745,
+      "payload": {
+        "sql": "SELECT TOP (200000) \n  t0.[Id] AS [Id],\n  t0.[Description] AS [Description],\n  t0.[CountryCode] AS [CountryCode],\n  t0.[Segment] AS [Segment],\n  t0.[RewardsEarnLimit] AS [RewardsEarnLimit],\n  t0.[RewardsRedeemRate] AS [RewardsRedeemRate],\n  t0.[DellAdvantagePercent] AS [DellAdvantagePercent],\n  t0.[DellPreferredAccountPercent] AS [DellPreferredAccountPercent],\n  t0.[TargetLoyaltyTierLevel] AS [TargetLoyaltyTierLevel],\n  t0.[ShippingType] AS [ShippingType],\n  t0.[Enabled] AS [Enabled],\n  t0.[Created] AS [Created]\nFROM [dbo].[ProgramDetails] AS t0",
+        "params": {},
+        "expected_columns": [
+          "Id",
+          "Description",
+          "CountryCode",
+          "Segment",
+          "RewardsEarnLimit",
+          "RewardsRedeemRate",
+          "DellAdvantagePercent",
+          "DellPreferredAccountPercent",
+          "TargetLoyaltyTierLevel",
+          "ShippingType",
+          "Enabled",
+          "Created"
+        ],
+        "is_aggregated": false,
+        "top": 200000,
+        "order_by": [
+          {
+            "field": "OptOutMembers.LastUpdated",
+            "dir": "DESC"
+          }
+        ],
+        "time_grain": null
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767689745,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767689745,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[Id] AS [Id],\n       t0.[Description] AS [Description],\n       t0.[CountryCode] AS [CountryCode],\n       t0.[Segment] AS [Segment],\n       t0.[RewardsEarnLimit] AS [RewardsEarnLimit],\n       t0.[RewardsRedeemRate] AS [RewardsRedeemRate],\n       t0.[DellAdvantagePercent] AS [DellAdvantagePercent],\n       t0.[DellPreferredAccountPercent] AS [DellPreferredAccountPercent],\n       t0.[TargetLoyaltyTierLevel] AS [TargetLoyaltyTierLevel],\n       t0.[ShippingType] AS [ShippingType],\n       t0.[Enabled] AS [Enabled],\n       t0.[Created] AS [Created]\nFROM [dbo].[ProgramDetails] AS t0",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767689745,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767689745,
+      "node": "G_execute",
+      "message": "'Settings' object has no attribute 'MSSQL_DRIVER'",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 203, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 69, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 96, in run_sql_query\n    engine = get_engine(settings)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 45, in get_engine\n    _ENGINE = build_mssql_engine(settings)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 23, in build_mssql_engine\n    driver = settings.MSSQL_DRIVER\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pydantic\\main.py\", line 1026, in __getattr__\n    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\nAttributeError: 'Settings' object has no attribute 'MSSQL_DRIVER'\n"
+    }
+  ]
+}

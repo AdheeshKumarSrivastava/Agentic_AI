@@ -20,28 +20,25 @@ def _ss_init(key: str, default: Any) -> None:
         st.session_state[key] = default
 
 
-def _apply_allowlist(new_list: List[str]) -> None:
-    """
-    Safe allowlist apply: update the widget's backing key BEFORE rerun,
-    and keep a canonical copy too.
-    """
-    # This key MUST match the multiselect key
-    st.session_state["allowed_tables_picker"] = list(new_list)
-    st.session_state["allowed_tables"] = list(new_list)
-
-
 def _reset_suggestions() -> None:
     st.session_state.pop("suggested_tables", None)
     st.session_state.pop("suggested_intent", None)
     st.session_state.pop("suggested_reasoning", None)
 
 
-def _suggest_tables(settings: Settings, kg: KnowledgeGraphStore, registry: SchemaRegistry, question: str) -> None:
+def _suggest_tables(
+    *,
+    settings: Settings,
+    kg: KnowledgeGraphStore,
+    registry: SchemaRegistry,
+    question: str,
+) -> None:
     """
     Generate suggestions from full schema (not current allowlist).
     Uses PlannerAgent.schema_reasoning().
+    Lazy import avoids circular imports.
     """
-    from agents.planner_agent import PlannerAgent  # lazy import to avoid circulars
+    from agents.planner_agent import PlannerAgent  # lazy import
 
     schema = kg.load_schema()
     all_tables = sorted(schema.get("tables", {}).keys())
@@ -70,7 +67,7 @@ def _run_pipeline(
     """
     Runs pipeline with safe lazy import (avoids circular import issues).
     """
-    from core.run_pipeline import run_agentic_pipeline  # lazy import to avoid circulars
+    from core.run_pipeline import run_agentic_pipeline  # lazy import
 
     if run_id is None:
         run_id = trace_store.new_run()
@@ -112,7 +109,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     _ss_init("allowed_tables", list(all_tables))
     _ss_init("allowed_tables_picker", list(st.session_state["allowed_tables"]))
 
-    # large_mode: keep ONLY widget key "large_mode" (do not assign after widget)
+    # large_mode is widget-owned; initialize only once
     _ss_init("large_mode", True)
 
     # -----------------------------
@@ -133,9 +130,9 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     st.divider()
     st.subheader("2) Table Selection (You control the final allowlist)")
 
-    # ---- Apply pending allowlist BEFORE widget ----
+    # ✅ Apply pending allowlist BEFORE widget instantiation
     if "pending_allowed_tables" in st.session_state:
-        st.session_state["allowed_tables_picker"] = st.session_state.pop("pending_allowed_tables")
+        st.session_state["allowed_tables_picker"] = list(st.session_state.pop("pending_allowed_tables"))
 
     col1, col2 = st.columns([1, 1], gap="large")
 
@@ -168,40 +165,43 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     with col2:
         st.caption("Agent suggestion")
 
-        if st.button("Suggest from question"):
+        suggest_btn = st.button("Suggest from question")
+        if suggest_btn:
             if not question.strip():
                 st.error("Type a question first.")
             else:
-                intent = planner.extract_intent(question, allowed_tables=all_tables)
-                reasoning = planner.schema_reasoning(intent, allowed_tables=all_tables)
-                st.session_state["suggested_tables"] = reasoning.get("candidate_tables", [])
-                st.session_state["suggested_intent"] = intent
-                st.session_state["suggested_reasoning"] = reasoning
+                _suggest_tables(settings=settings, kg=kg, registry=registry, question=question)
                 st.rerun()
 
-        suggested = st.session_state.get("suggested_tables", [])
+        suggested = st.session_state.get("suggested_tables", []) or []
         if suggested:
             st.success(f"Suggested {len(suggested)} tables")
             st.write(suggested)
 
             if st.button("Apply suggested as allowlist", type="primary"):
+                # ✅ apply via pending BEFORE widget on next rerun
                 st.session_state["pending_allowed_tables"] = list(suggested)
                 st.rerun()
 
             if st.button("Reset suggestion"):
-                st.session_state.pop("suggested_tables", None)
-                st.session_state.pop("suggested_intent", None)
-                st.session_state.pop("suggested_reasoning", None)
+                _reset_suggestions()
                 st.rerun()
+
+            with st.expander("Show suggestion details (intent + scoring)"):
+                st.json(
+                    {
+                        "intent": st.session_state.get("suggested_intent", {}),
+                        "schema_reasoning": st.session_state.get("suggested_reasoning", {}),
+                    }
+                )
+
     # -----------------------------
-    # Large Query Mode (MUST be widget-owned)
+    # 3) Runtime controls
     # -----------------------------
     st.divider()
     st.subheader("3) Runtime controls")
 
-    # IMPORTANT:
-    # Do NOT do: st.session_state["large_mode"] = st.toggle(...)
-    # Just render the toggle with the SAME key.
+    # ✅ widget-owned key ONLY (never assign st.session_state["large_mode"] after this)
     st.toggle(
         "Large Query Mode (use MAX_RETURNED_ROWS)",
         key="large_mode",
@@ -235,7 +235,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     result = st.session_state.get("last_result")
     if not result:
-        st.info ("Run the pipeline to generate plan + insights + dashboard.")
+        st.info("Run the pipeline to generate plan + insights + dashboard.")
         return
 
     status = result.get("status")
@@ -246,14 +246,14 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     if status == "needs_human_review":
         st.warning("Human review required before executing SQL.")
-        packet = result.get("human_review_packet", {})
+        packet = result.get("human_review_packet", {}) or {}
         st.json(packet)
 
         st.subheader("Provide explicit edits (JSON)")
         default_edit = {
             "allowed_tables": list(st.session_state["allowed_tables"]),
-            "plan": packet.get("proposed_plan", {}),
-            # optionally allow override:
+            "plan": packet.get("proposed_plan", {}) or {},
+            # optional override:
             # "large_mode": bool(st.session_state["large_mode"]),
         }
         edit_text = st.text_area("Edits JSON", value=json.dumps(default_edit, indent=2), height=280)
@@ -262,7 +262,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
             try:
                 human_review = json.loads(edit_text)
                 if not isinstance(human_review, dict):
-                    raise ValueError("Edits JSON must be an object.")
+                    raise ValueError("Edits JSON must be an object/dict.")
             except Exception as e:
                 st.error(f"Invalid JSON edits: {e}")
                 return
@@ -287,7 +287,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     if status in ("failed", "rejected", "failed_data_quality"):
         st.error(result.get("error") or result.get("rejection") or result.get("data_quality") or "Unknown error")
-        st.info ("Open **Run Traces** to see node outputs & errors.")
+        st.info("Open **Run Traces** to see node outputs & errors.")
         if developer_mode:
             st.subheader("Developer dump")
             st.json(result)
@@ -298,11 +298,11 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     if status == "success":
         st.subheader("Insights")
-        st.json(result.get("insights", {}))
+        st.json(result.get("insights", {}) or {})
 
         st.subheader("Dashboard Preview")
-        html = result.get("dashboard_html", "") or ""
-        if html.strip():
+        html = (result.get("dashboard_html", "") or "").strip()
+        if html:
             components.html(html, height=900, scrolling=True)
             st.download_button(
                 "Download Dashboard HTML",
