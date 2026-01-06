@@ -201,7 +201,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
                     }
                 )
         else:
-            st.info [st.info]("Click **Suggest from question** to get table recommendations.")
+            st.info ("Click **Suggest from question** to get table recommendations.")
 
     # -----------------------------
     # Large Query Mode (MUST be widget-owned)
@@ -245,7 +245,7 @@ def render_ask_analytics(settings: Settings, trace_store: TraceStore, developer_
     # -----------------------------
     result = st.session_state.get("last_result")
     if not result:
-        st.info [st.info]("Run the pipeline to generate plan + insights + dashboard.")
+        st.info ("Run the pipeline to generate plan + insights + dashboard.")
         return
 
     status = result.get("status")
