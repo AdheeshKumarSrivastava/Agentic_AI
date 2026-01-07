@@ -1,0 +1,841 @@
+{
+  "run_id": "4ec4fe4f19e2",
+  "created_at": 1767697546,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767697547,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 36,
+        "allowed_tables_preview": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.sysdiagrams",
+          "dbo.test"
+        ]
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767697727,
+      "payload": {
+        "kpis": [
+          "Total number of members",
+          "Number of new enrollments per month",
+          "Average member lifetime value (LTV)",
+          "Conversion rate from opt-in to active membership",
+          "Redemption rate of reward campaigns"
+        ],
+        "dimensions": [
+          "Membership type",
+          "Geography",
+          "Campaign name",
+          "Opt-in source"
+        ],
+        "time_range": null,
+        "granularity": "month",
+        "segments": [],
+        "filters": [],
+        "confidence": 0.95,
+        "notes": "This dashboard will provide a high-level overview of membership activities and performance, focusing on key metrics relevant to leadership."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767697727,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767697727,
+      "payload": {
+        "candidate_tables": [
+          "dbo.RewardCampaigns",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.MemberPersuade",
+          "dbo.OptOutMembers",
+          "dbo.RewardCampaignCoupons",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.MBPMemberCouponData",
+          "dbo.RewardCampaignActivityLogs"
+        ],
+        "scoring_top": [
+          [
+            14.0,
+            "dbo.RewardCampaigns"
+          ],
+          [
+            12.5,
+            "dbo.Members"
+          ],
+          [
+            12.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            12.0,
+            "dbo.Members_US"
+          ],
+          [
+            11.0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          [
+            10.0,
+            "dbo.MemberPersuade"
+          ],
+          [
+            9.0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            8.0,
+            "dbo.RewardCampaignCoupons"
+          ],
+          [
+            7.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            7.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            7.0,
+            "dbo.MBPMemberCouponData"
+          ],
+          [
+            7.0,
+            "dbo.RewardCampaignActivityLogs"
+          ],
+          [
+            6.0,
+            "dbo.EnrollCampaigns"
+          ],
+          [
+            6.0,
+            "dbo.MemberOrders"
+          ],
+          [
+            6.0,
+            "dbo.ProgramDetails"
+          ],
+          [
+            6.0,
+            "dbo.ProgramDetailsHistory"
+          ],
+          [
+            6.0,
+            "dbo.RewardsAccountQueryAuditLogs"
+          ],
+          [
+            5.0,
+            "dbo.MBPMemberCouponCount"
+          ],
+          [
+            5.0,
+            "dbo.MppMemberEnrolls"
+          ],
+          [
+            4.0,
+            "dbo.BAUOptInFileProcesses"
+          ],
+          [
+            4.0,
+            "dbo.MBPConfigChecks"
+          ],
+          [
+            4.0,
+            "dbo.MemberDeleteAuditLogs"
+          ],
+          [
+            3.0,
+            "dbo.ActivityAuditLogs"
+          ],
+          [
+            3.0,
+            "dbo.DataChangeLog"
+          ],
+          [
+            3.0,
+            "dbo.PersuadeRegistrationFailures"
+          ],
+          [
+            3.0,
+            "dbo.PMCDataProcessingActivityLog"
+          ],
+          [
+            2.0,
+            "dbo.MBPConfigsMaster"
+          ],
+          [
+            2.0,
+            "dbo.MBPConfigsMstr"
+          ],
+          [
+            2.0,
+            "dbo.Users"
+          ],
+          [
+            1.5,
+            "dbo.MBPSBDetails"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.RewardCampaigns": {
+            "total_score": 14.0,
+            "schema_score": 14.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:campaign",
+              "col:campaign",
+              "col:value",
+              "col:type",
+              "col:name",
+              "col:active",
+              "table:reward",
+              "table:campaigns"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 12.5,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:source",
+              "col:key",
+              "col:level",
+              "col:number",
+              "table:members",
+              "col:active",
+              "table:member",
+              "col:member"
+            ],
+            "matched_content": [],
+            "row_count": 10702,
+            "has_content_index": false
+          },
+          "dbo.Members_02022024": {
+            "total_score": 12.0,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:source",
+              "col:key",
+              "col:level",
+              "col:number",
+              "table:members",
+              "col:active",
+              "table:member",
+              "col:member"
+            ],
+            "matched_content": [],
+            "row_count": 18593823,
+            "has_content_index": false
+          },
+          "dbo.Members_US": {
+            "total_score": 12.0,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:source",
+              "col:key",
+              "col:level",
+              "col:number",
+              "table:members",
+              "col:active",
+              "table:member",
+              "col:member"
+            ],
+            "matched_content": [],
+            "row_count": 5767824,
+            "has_content_index": false
+          },
+          "dbo.RewardsRedemptionAuditLogs": {
+            "total_score": 11.0,
+            "schema_score": 11.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:source",
+              "col:key",
+              "col:type",
+              "table:redemption",
+              "col:redemption",
+              "table:reward",
+              "col:member"
+            ],
+            "matched_content": [],
+            "row_count": 315694,
+            "has_content_index": false
+          },
+          "dbo.MemberPersuade": {
+            "total_score": 10.0,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:key",
+              "col:number",
+              "table:per",
+              "col:opt",
+              "table:member",
+              "col:member"
+            ],
+            "matched_content": [],
+            "row_count": 764900,
+            "has_content_index": false
+          },
+          "dbo.OptOutMembers": {
+            "total_score": 9.0,
+            "schema_score": 9.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:members",
+              "table:opt",
+              "table:member"
+            ],
+            "matched_content": [],
+            "row_count": 2251,
+            "has_content_index": false
+          },
+          "dbo.RewardCampaignCoupons": {
+            "total_score": 8.0,
+            "schema_score": 8.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:campaign",
+              "col:campaign",
+              "col:active",
+              "table:reward"
+            ],
+            "matched_content": [],
+            "row_count": 55,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:members",
+              "col:name",
+              "table:member"
+            ],
+            "matched_content": [],
+            "row_count": 1413172,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers_US": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:members",
+              "col:name",
+              "table:member"
+            ],
+            "matched_content": [],
+            "row_count": 812900,
+            "has_content_index": false
+          },
+          "dbo.MBPMemberCouponData": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:source",
+              "col:level",
+              "col:number",
+              "col:type",
+              "table:member"
+            ],
+            "matched_content": [],
+            "row_count": 5,
+            "has_content_index": false
+          },
+          "dbo.RewardCampaignActivityLogs": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:campaign",
+              "col:campaign",
+              "table:reward"
+            ],
+            "matched_content": [],
+            "row_count": 2,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "active",
+          "activities",
+          "average",
+          "campaign",
+          "campaigns",
+          "conversion",
+          "enrollments",
+          "focusing",
+          "from",
+          "geography",
+          "high",
+          "key",
+          "leadership",
+          "level",
+          "lifetime",
+          "ltv",
+          "member",
+          "members",
+          "membership",
+          "metrics",
+          "month",
+          "name",
+          "new",
+          "number",
+          "opt",
+          "overview",
+          "per",
+          "performance",
+          "provide",
+          "rate",
+          "redemption",
+          "relevant",
+          "reward",
+          "source",
+          "this",
+          "total",
+          "type",
+          "value",
+          "will"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767697727,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767698832,
+      "payload": {
+        "tables": [
+          "dbo.RewardCampaigns",
+          "dbo.Members"
+        ],
+        "joins": [
+          {
+            "left_table": "MBPMemberCouponData",
+            "right_table": "CPSMembers_US",
+            "left_key": "ProfileId",
+            "right_key": "ProfileId",
+            "join_type": "INNER"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "TotalCouponsIssued",
+            "agg": "COUNT",
+            "field": "MBPMemberCouponData.Id",
+            "depends_on": [
+              "MBPMemberCouponData"
+            ]
+          },
+          {
+            "name": "UniqueMembersWithCoupons",
+            "agg": "COUNT DISTINCT",
+            "field": "CPSMembers_US.ProfileId",
+            "depends_on": [
+              "MBPMemberCouponData",
+              "CPSMembers_US"
+            ]
+          }
+        ],
+        "dimensions": [
+          "MBPMemberCouponData.OrderDate",
+          "CPSMembers_US.FirstName",
+          "CPSMembers_US.LastName"
+        ],
+        "filters": [
+          {
+            "field": "MBPMemberCouponData.OrderDate",
+            "operator": ">=",
+            "value": "2023-10-01T00:00:00Z"
+          },
+          {
+            "field": "CPSMembers_US.IsProfileAvailable",
+            "operator": "=",
+            "value": 1
+          }
+        ],
+        "time_field": "MBPMemberCouponData.OrderDate",
+        "time_grain": "DAY",
+        "order_by": [
+          {
+            "field": "MBPMemberCouponData.OrderDate",
+            "dir": "ASC"
+          },
+          {
+            "field": "CPSMembers_US.FirstName",
+            "dir": "ASC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "BAR_CHART",
+            "title": "Total Coupons Issued Over Time",
+            "x": "MBPMemberCouponData.OrderDate",
+            "y": "TotalCouponsIssued",
+            "color": "CPSMembers_US.FirstName"
+          },
+          {
+            "type": "PIE_CHART",
+            "title": "Unique Members with Coupons",
+            "x": "CPSMembers_US.FirstName",
+            "agg": "COUNT DISTINCT",
+            "color": "CPSMembers_US.LastName"
+          }
+        ],
+        "expected_columns": [
+          "MBPMemberCouponData.Id",
+          "MBPMemberCouponData.OrderNumber",
+          "CPSMembers_US.ProfileId",
+          "CPSMembers_US.FirstName",
+          "CPSMembers_US.LastName"
+        ],
+        "query_cost_risk": "medium",
+        "notes": "This query involves joining two tables and applying filters to analyze the distribution of coupons issued over time and unique members with coupons.",
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767698832,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767698832,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767698832,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.sysdiagrams",
+          "dbo.test"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.RewardCampaigns",
+            "dbo.Members"
+          ],
+          "joins": [
+            {
+              "left_table": "MBPMemberCouponData",
+              "right_table": "CPSMembers_US",
+              "left_key": "ProfileId",
+              "right_key": "ProfileId",
+              "join_type": "INNER"
+            }
+          ],
+          "metrics": [
+            {
+              "name": "TotalCouponsIssued",
+              "agg": "COUNT",
+              "field": "MBPMemberCouponData.Id",
+              "depends_on": [
+                "MBPMemberCouponData"
+              ]
+            },
+            {
+              "name": "UniqueMembersWithCoupons",
+              "agg": "COUNT DISTINCT",
+              "field": "CPSMembers_US.ProfileId",
+              "depends_on": [
+                "MBPMemberCouponData",
+                "CPSMembers_US"
+              ]
+            }
+          ],
+          "dimensions": [
+            "MBPMemberCouponData.OrderDate",
+            "CPSMembers_US.FirstName",
+            "CPSMembers_US.LastName"
+          ],
+          "filters": [
+            {
+              "field": "MBPMemberCouponData.OrderDate",
+              "operator": ">=",
+              "value": "2023-10-01T00:00:00Z"
+            },
+            {
+              "field": "CPSMembers_US.IsProfileAvailable",
+              "operator": "=",
+              "value": 1
+            }
+          ],
+          "time_field": "MBPMemberCouponData.OrderDate",
+          "time_grain": "DAY",
+          "order_by": [
+            {
+              "field": "MBPMemberCouponData.OrderDate",
+              "dir": "ASC"
+            },
+            {
+              "field": "CPSMembers_US.FirstName",
+              "dir": "ASC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "BAR_CHART",
+              "title": "Total Coupons Issued Over Time",
+              "x": "MBPMemberCouponData.OrderDate",
+              "y": "TotalCouponsIssued",
+              "color": "CPSMembers_US.FirstName"
+            },
+            {
+              "type": "PIE_CHART",
+              "title": "Unique Members with Coupons",
+              "x": "CPSMembers_US.FirstName",
+              "agg": "COUNT DISTINCT",
+              "color": "CPSMembers_US.LastName"
+            }
+          ],
+          "expected_columns": [
+            "MBPMemberCouponData.Id",
+            "MBPMemberCouponData.OrderNumber",
+            "CPSMembers_US.ProfileId",
+            "CPSMembers_US.FirstName",
+            "CPSMembers_US.LastName"
+          ],
+          "query_cost_risk": "medium",
+          "notes": "This query involves joining two tables and applying filters to analyze the distribution of coupons issued over time and unique members with coupons.",
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [
+            "Total number of members",
+            "Number of new enrollments per month",
+            "Average member lifetime value (LTV)",
+            "Conversion rate from opt-in to active membership",
+            "Redemption rate of reward campaigns"
+          ],
+          "dimensions": [
+            "Membership type",
+            "Geography",
+            "Campaign name",
+            "Opt-in source"
+          ],
+          "time_range": null,
+          "granularity": "month",
+          "segments": [],
+          "filters": [],
+          "confidence": 0.95,
+          "notes": "This dashboard will provide a high-level overview of membership activities and performance, focusing on key metrics relevant to leadership."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767698832,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767698832,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[CampaignId] AS [CampaignId],\n  t0.[CampaignName] AS [CampaignName],\n  t0.[CampaignTag] AS [CampaignTag],\n  t0.[StartDate] AS [StartDate],\n  t0.[EndDate] AS [EndDate],\n  t0.[OfferType] AS [OfferType],\n  t0.[OfferValue] AS [OfferValue],\n  t0.[CmsImgLink] AS [CmsImgLink],\n  t0.[CreateDate] AS [CreateDate],\n  t0.[CountryCode] AS [CountryCode],\n  t0.[IsActive] AS [IsActive],\n  t0.[LastUpdatedBy] AS [LastUpdatedBy]\nFROM [dbo].[RewardCampaigns] AS t0",
+        "params": {},
+        "expected_columns": [
+          "CampaignId",
+          "CampaignName",
+          "CampaignTag",
+          "StartDate",
+          "EndDate",
+          "OfferType",
+          "OfferValue",
+          "CmsImgLink",
+          "CreateDate",
+          "CountryCode",
+          "IsActive",
+          "LastUpdatedBy"
+        ],
+        "is_aggregated": false,
+        "top": 200000,
+        "time_grain": "DAY",
+        "final_tables": [
+          "dbo.RewardCampaigns",
+          "dbo.Members"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767698832,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767698832,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[CampaignId] AS [CampaignId],\n       t0.[CampaignName] AS [CampaignName],\n       t0.[CampaignTag] AS [CampaignTag],\n       t0.[StartDate] AS [StartDate],\n       t0.[EndDate] AS [EndDate],\n       t0.[OfferType] AS [OfferType],\n       t0.[OfferValue] AS [OfferValue],\n       t0.[CmsImgLink] AS [CmsImgLink],\n       t0.[CreateDate] AS [CreateDate],\n       t0.[CountryCode] AS [CountryCode],\n       t0.[IsActive] AS [IsActive],\n       t0.[LastUpdatedBy] AS [LastUpdatedBy]\nFROM [dbo].[RewardCampaigns] AS t0",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767698832,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767698832,
+      "node": "G_execute",
+      "message": "'Settings' object has no attribute 'MSSQL_DRIVER'",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 222, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 69, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 96, in run_sql_query\n    engine = get_engine(settings)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 45, in get_engine\n    _ENGINE = build_mssql_engine(settings)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 23, in build_mssql_engine\n    driver = settings.MSSQL_DRIVER\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pydantic\\main.py\", line 1026, in __getattr__\n    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\nAttributeError: 'Settings' object has no attribute 'MSSQL_DRIVER'\n"
+    }
+  ]
+}

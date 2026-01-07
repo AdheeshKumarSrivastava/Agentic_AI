@@ -1,0 +1,737 @@
+{
+  "run_id": "662833f2f8b1",
+  "created_at": 1767693043,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767693044,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 12,
+        "allowed_tables_preview": [
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.MBPMemberCouponData",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.EnrollCampaigns",
+          "dbo.OptOutMembers",
+          "dbo.MemberOrders",
+          "dbo.MppMemberEnrolls"
+        ]
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767693323,
+      "payload": {
+        "kpis": [
+          "COUNT(dbo.Members.ID)",
+          "SUM(dbo.RewardsRedemptionAuditLogs.Amount)",
+          "COUNT(dbo.MemberOrders.OrderID)"
+        ],
+        "dimensions": [
+          "dbo.Members.Country",
+          "dbo.Members.StateProvince",
+          "dbo.Members.MembershipTier"
+        ],
+        "time_range": null,
+        "granularity": null,
+        "segments": [
+          "dbo.Members.MembershipTier = 'Senior'"
+        ],
+        "filters": [
+          {
+            "field": "dbo.Members.EnrollmentDate",
+            "op": ">=",
+            "value": "2023-01-01"
+          },
+          {
+            "field": "dbo.Members.EnrollmentDate",
+            "op": "<",
+            "value": "2024-01-01"
+          }
+        ],
+        "confidence": 0.95,
+        "notes": "This dashboard will provide a high-level overview of senior members, focusing on their count, redemption amounts, and orders within the last year."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767693323,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767693323,
+      "payload": {
+        "candidate_tables": [
+          "dbo.MemberOrders",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.OptOutMembers",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPMemberCouponData",
+          "dbo.MppMemberEnrolls",
+          "dbo.RewardCampaigns"
+        ],
+        "scoring_top": [
+          [
+            12.0,
+            "dbo.MemberOrders"
+          ],
+          [
+            12.0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          [
+            10.5,
+            "dbo.Members"
+          ],
+          [
+            10.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            10.0,
+            "dbo.Members_US"
+          ],
+          [
+            9.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            9.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            9.0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            6.0,
+            "dbo.EnrollCampaigns"
+          ],
+          [
+            6.0,
+            "dbo.MBPMemberCouponData"
+          ],
+          [
+            6.0,
+            "dbo.MppMemberEnrolls"
+          ],
+          [
+            6.0,
+            "dbo.RewardCampaigns"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.MemberOrders": {
+            "total_score": 12.0,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:memberorders",
+              "col:country",
+              "table:dbo",
+              "col:count",
+              "table:orders",
+              "col:orders"
+            ],
+            "matched_content": [],
+            "row_count": 41245,
+            "has_content_index": false
+          },
+          "dbo.RewardsRedemptionAuditLogs": {
+            "total_score": 12.0,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:redemption",
+              "col:redemption",
+              "table:rewardsredemptionauditlogs",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 315694,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 10.5,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:level",
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 10702,
+            "has_content_index": false
+          },
+          "dbo.Members_02022024": {
+            "total_score": 10.0,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:level",
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 18593823,
+            "has_content_index": false
+          },
+          "dbo.Members_US": {
+            "total_score": 10.0,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:level",
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 5767824,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers": {
+            "total_score": 9.0,
+            "schema_score": 9.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 1413172,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers_US": {
+            "total_score": 9.0,
+            "schema_score": 9.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 812900,
+            "has_content_index": false
+          },
+          "dbo.OptOutMembers": {
+            "total_score": 9.0,
+            "schema_score": 9.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "table:members",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 2251,
+            "has_content_index": false
+          },
+          "dbo.EnrollCampaigns": {
+            "total_score": 6.0,
+            "schema_score": 6.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 220,
+            "has_content_index": false
+          },
+          "dbo.MBPMemberCouponData": {
+            "total_score": 6.0,
+            "schema_score": 6.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:level",
+              "col:last",
+              "table:dbo",
+              "col:orders"
+            ],
+            "matched_content": [],
+            "row_count": 5,
+            "has_content_index": false
+          },
+          "dbo.MppMemberEnrolls": {
+            "total_score": 6.0,
+            "schema_score": 6.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 249,
+            "has_content_index": false
+          },
+          "dbo.RewardCampaigns": {
+            "total_score": 6.0,
+            "schema_score": 6.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:last",
+              "col:country",
+              "table:dbo",
+              "col:count"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "amount",
+          "amounts",
+          "count",
+          "country",
+          "dbo",
+          "focusing",
+          "high",
+          "last",
+          "level",
+          "memberorders",
+          "members",
+          "membershiptier",
+          "orderid",
+          "orders",
+          "overview",
+          "provide",
+          "redemption",
+          "rewardsredemptionauditlogs",
+          "senior",
+          "stateprovince",
+          "sum",
+          "their",
+          "this",
+          "will",
+          "within",
+          "year"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767693323,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767694694,
+      "payload": {
+        "tables": [
+          "dbo.MemberOrders",
+          "dbo.RewardsRedemptionAuditLogs"
+        ],
+        "joins": [
+          {
+            "left_table": "RewardCampaigns",
+            "right_table": "MppMemberEnrolls",
+            "left_key": "CampaignId",
+            "right_key": "DellBenefitId",
+            "join_type": "INNER"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "TotalCampaigns",
+            "agg": "COUNT",
+            "field": "RewardCampaigns.CampaignId",
+            "depends_on": [
+              "RewardCampaigns"
+            ]
+          },
+          {
+            "name": "ActiveCampaigns",
+            "agg": "SUM",
+            "field": "CASE WHEN RewardCampaigns.Status = 'Active' THEN 1 ELSE 0 END",
+            "depends_on": [
+              "RewardCampaigns"
+            ]
+          },
+          {
+            "name": "TotalEnrollments",
+            "agg": "COUNT",
+            "field": "MppMemberEnrolls.Id",
+            "depends_on": [
+              "MppMemberEnrolls"
+            ]
+          }
+        ],
+        "dimensions": [
+          "RewardCampaigns.CampaignName",
+          "RewardCampaigns.Status",
+          "MppMemberEnrolls.EnrollDate"
+        ],
+        "filters": [
+          {
+            "field": "RewardCampaigns.Status",
+            "operator": "=",
+            "value": "Active"
+          },
+          {
+            "field": "MppMemberEnrolls.EnrollDate",
+            "operator": ">=",
+            "value": "2023-01-01"
+          }
+        ],
+        "time_field": "MppMemberEnrolls.EnrollDate",
+        "time_grain": "DAY",
+        "order_by": [
+          {
+            "field": "RewardCampaigns.CampaignName",
+            "dir": "ASC"
+          },
+          {
+            "field": "MppMemberEnrolls.EnrollDate",
+            "dir": "DESC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "BAR",
+            "title": "Active Campaigns Over Time",
+            "x": "MppMemberEnrolls.EnrollDate",
+            "y": "TotalCampaigns",
+            "color": "RewardCampaigns.CampaignName"
+          },
+          {
+            "type": "LINE",
+            "title": "Daily Enrollments by Status",
+            "x": "MppMemberEnrolls.EnrollDate",
+            "y": "ActiveCampaigns",
+            "color": "RewardCampaigns.Status"
+          }
+        ],
+        "expected_columns": [
+          "RewardCampaigns.CampaignId",
+          "RewardCampaigns.CampaignName",
+          "RewardCampaigns.Status",
+          "MppMemberEnrolls.Id",
+          "MppMemberEnrolls.EnrollDate"
+        ],
+        "query_cost_risk": "medium",
+        "notes": "Joining RewardCampaigns and MppMemberEnrolls to analyze active campaigns and their enrollments over time.",
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767694694,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767694694,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767694694,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.MBPMemberCouponData",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.EnrollCampaigns",
+          "dbo.OptOutMembers",
+          "dbo.MemberOrders",
+          "dbo.MppMemberEnrolls"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.MemberOrders",
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          "joins": [
+            {
+              "left_table": "RewardCampaigns",
+              "right_table": "MppMemberEnrolls",
+              "left_key": "CampaignId",
+              "right_key": "DellBenefitId",
+              "join_type": "INNER"
+            }
+          ],
+          "metrics": [
+            {
+              "name": "TotalCampaigns",
+              "agg": "COUNT",
+              "field": "RewardCampaigns.CampaignId",
+              "depends_on": [
+                "RewardCampaigns"
+              ]
+            },
+            {
+              "name": "ActiveCampaigns",
+              "agg": "SUM",
+              "field": "CASE WHEN RewardCampaigns.Status = 'Active' THEN 1 ELSE 0 END",
+              "depends_on": [
+                "RewardCampaigns"
+              ]
+            },
+            {
+              "name": "TotalEnrollments",
+              "agg": "COUNT",
+              "field": "MppMemberEnrolls.Id",
+              "depends_on": [
+                "MppMemberEnrolls"
+              ]
+            }
+          ],
+          "dimensions": [
+            "RewardCampaigns.CampaignName",
+            "RewardCampaigns.Status",
+            "MppMemberEnrolls.EnrollDate"
+          ],
+          "filters": [
+            {
+              "field": "RewardCampaigns.Status",
+              "operator": "=",
+              "value": "Active"
+            },
+            {
+              "field": "MppMemberEnrolls.EnrollDate",
+              "operator": ">=",
+              "value": "2023-01-01"
+            }
+          ],
+          "time_field": "MppMemberEnrolls.EnrollDate",
+          "time_grain": "DAY",
+          "order_by": [
+            {
+              "field": "RewardCampaigns.CampaignName",
+              "dir": "ASC"
+            },
+            {
+              "field": "MppMemberEnrolls.EnrollDate",
+              "dir": "DESC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "BAR",
+              "title": "Active Campaigns Over Time",
+              "x": "MppMemberEnrolls.EnrollDate",
+              "y": "TotalCampaigns",
+              "color": "RewardCampaigns.CampaignName"
+            },
+            {
+              "type": "LINE",
+              "title": "Daily Enrollments by Status",
+              "x": "MppMemberEnrolls.EnrollDate",
+              "y": "ActiveCampaigns",
+              "color": "RewardCampaigns.Status"
+            }
+          ],
+          "expected_columns": [
+            "RewardCampaigns.CampaignId",
+            "RewardCampaigns.CampaignName",
+            "RewardCampaigns.Status",
+            "MppMemberEnrolls.Id",
+            "MppMemberEnrolls.EnrollDate"
+          ],
+          "query_cost_risk": "medium",
+          "notes": "Joining RewardCampaigns and MppMemberEnrolls to analyze active campaigns and their enrollments over time.",
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [
+            "COUNT(dbo.Members.ID)",
+            "SUM(dbo.RewardsRedemptionAuditLogs.Amount)",
+            "COUNT(dbo.MemberOrders.OrderID)"
+          ],
+          "dimensions": [
+            "dbo.Members.Country",
+            "dbo.Members.StateProvince",
+            "dbo.Members.MembershipTier"
+          ],
+          "time_range": null,
+          "granularity": null,
+          "segments": [
+            "dbo.Members.MembershipTier = 'Senior'"
+          ],
+          "filters": [
+            {
+              "field": "dbo.Members.EnrollmentDate",
+              "op": ">=",
+              "value": "2023-01-01"
+            },
+            {
+              "field": "dbo.Members.EnrollmentDate",
+              "op": "<",
+              "value": "2024-01-01"
+            }
+          ],
+          "confidence": 0.95,
+          "notes": "This dashboard will provide a high-level overview of senior members, focusing on their count, redemption amounts, and orders within the last year."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767694695,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767694695,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[Id] AS [Id],\n  t0.[PostDate] AS [PostDate],\n  t0.[CountryCode] AS [CountryCode],\n  t0.[OrderNumber] AS [OrderNumber],\n  t0.[ProfileId] AS [ProfileId],\n  t0.[OrderDate] AS [OrderDate],\n  t0.[OrderSource] AS [OrderSource],\n  t0.[OrderType] AS [OrderType],\n  t0.[RequestPayload] AS [RequestPayload],\n  t0.[ResponsePayload] AS [ResponsePayload],\n  t0.[ResponseCode] AS [ResponseCode],\n  t0.[StatusNumber] AS [StatusNumber]\nFROM [dbo].[MemberOrders] AS t0",
+        "params": {},
+        "expected_columns": [
+          "Id",
+          "PostDate",
+          "CountryCode",
+          "OrderNumber",
+          "ProfileId",
+          "OrderDate",
+          "OrderSource",
+          "OrderType",
+          "RequestPayload",
+          "ResponsePayload",
+          "ResponseCode",
+          "StatusNumber"
+        ],
+        "is_aggregated": false,
+        "top": 200000,
+        "time_grain": "DAY",
+        "final_tables": [
+          "dbo.MemberOrders",
+          "dbo.RewardsRedemptionAuditLogs"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767694695,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767694695,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[Id] AS [Id],\n       t0.[PostDate] AS [PostDate],\n       t0.[CountryCode] AS [CountryCode],\n       t0.[OrderNumber] AS [OrderNumber],\n       t0.[ProfileId] AS [ProfileId],\n       t0.[OrderDate] AS [OrderDate],\n       t0.[OrderSource] AS [OrderSource],\n       t0.[OrderType] AS [OrderType],\n       t0.[RequestPayload] AS [RequestPayload],\n       t0.[ResponsePayload] AS [ResponsePayload],\n       t0.[ResponseCode] AS [ResponseCode],\n       t0.[StatusNumber] AS [StatusNumber]\nFROM [dbo].[MemberOrders] AS t0",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767694695,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767694695,
+      "node": "G_execute",
+      "message": "'Settings' object has no attribute 'MSSQL_DRIVER'",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 222, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 69, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 96, in run_sql_query\n    engine = get_engine(settings)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 45, in get_engine\n    _ENGINE = build_mssql_engine(settings)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 23, in build_mssql_engine\n    driver = settings.MSSQL_DRIVER\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pydantic\\main.py\", line 1026, in __getattr__\n    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\nAttributeError: 'Settings' object has no attribute 'MSSQL_DRIVER'\n"
+    }
+  ]
+}

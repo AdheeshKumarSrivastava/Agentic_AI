@@ -1,0 +1,315 @@
+{
+  "run_id": "6a98913f3f52",
+  "created_at": 1767700668,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767700668,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 12,
+        "allowed_tables_preview": [
+          "dbo.RewardCampaigns",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.MemberPersuade",
+          "dbo.OptOutMembers",
+          "dbo.RewardCampaignCoupons",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.MBPMemberCouponData",
+          "dbo.RewardCampaignActivityLogs"
+        ]
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767700670,
+      "payload": {
+        "kpis": [],
+        "dimensions": [],
+        "time_range": null,
+        "granularity": null,
+        "segments": [],
+        "filters": [],
+        "confidence": 0.4,
+        "notes": ""
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767700670,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767700670,
+      "payload": {
+        "candidate_tables": [
+          "dbo.Members"
+        ],
+        "scoring_top": [
+          [
+            0.5,
+            "dbo.Members"
+          ],
+          [
+            0.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            0.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            0.0,
+            "dbo.MBPMemberCouponData"
+          ],
+          [
+            0.0,
+            "dbo.MemberPersuade"
+          ],
+          [
+            0.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            0.0,
+            "dbo.Members_US"
+          ],
+          [
+            0.0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            0.0,
+            "dbo.RewardCampaignActivityLogs"
+          ],
+          [
+            0.0,
+            "dbo.RewardCampaignCoupons"
+          ],
+          [
+            0.0,
+            "dbo.RewardCampaigns"
+          ],
+          [
+            0.0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.Members": {
+            "total_score": 0.5,
+            "schema_score": 0.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [],
+            "matched_content": [],
+            "row_count": 10702,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": []
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767700670,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767700671,
+      "payload": {
+        "tables": [
+          "dbo.Members"
+        ],
+        "joins": [],
+        "metrics": [],
+        "dimensions": [],
+        "filters": [],
+        "visuals": [],
+        "order_by": [],
+        "time_field": null,
+        "time_grain": null,
+        "query_cost_risk": "low",
+        "notes": "",
+        "expected_columns": [],
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767700671,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767700671,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767700671,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.RewardCampaigns",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.MemberPersuade",
+          "dbo.OptOutMembers",
+          "dbo.RewardCampaignCoupons",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.MBPMemberCouponData",
+          "dbo.RewardCampaignActivityLogs"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.Members"
+          ],
+          "joins": [],
+          "metrics": [],
+          "dimensions": [],
+          "filters": [],
+          "visuals": [],
+          "order_by": [],
+          "time_field": null,
+          "time_grain": null,
+          "query_cost_risk": "low",
+          "notes": "",
+          "expected_columns": [],
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [],
+          "dimensions": [],
+          "time_range": null,
+          "granularity": null,
+          "segments": [],
+          "filters": [],
+          "confidence": 0.4,
+          "notes": ""
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767700671,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767700671,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[Id] AS [Id],\n  t0.[MemberKey] AS [MemberKey],\n  t0.[ProfileId] AS [ProfileId],\n  t0.[EpsilonId] AS [EpsilonId],\n  t0.[Program_ID] AS [Program_ID],\n  t0.[LanguageCode] AS [LanguageCode],\n  t0.[IsPrimary] AS [IsPrimary],\n  t0.[IsActive] AS [IsActive],\n  t0.[PreviouslyActiveMember] AS [PreviouslyActiveMember],\n  t0.[Created] AS [Created],\n  t0.[CreationChannel] AS [CreationChannel],\n  t0.[LastUpdated] AS [LastUpdated]\nFROM [dbo].[Members] AS t0",
+        "params": {},
+        "expected_columns": [
+          "Id",
+          "MemberKey",
+          "ProfileId",
+          "EpsilonId",
+          "Program_ID",
+          "LanguageCode",
+          "IsPrimary",
+          "IsActive",
+          "PreviouslyActiveMember",
+          "Created",
+          "CreationChannel",
+          "LastUpdated"
+        ],
+        "is_aggregated": false,
+        "top": 200000,
+        "time_grain": null,
+        "final_tables": [
+          "dbo.Members"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767700671,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767700671,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[Id] AS [Id],\n       t0.[MemberKey] AS [MemberKey],\n       t0.[ProfileId] AS [ProfileId],\n       t0.[EpsilonId] AS [EpsilonId],\n       t0.[Program_ID] AS [Program_ID],\n       t0.[LanguageCode] AS [LanguageCode],\n       t0.[IsPrimary] AS [IsPrimary],\n       t0.[IsActive] AS [IsActive],\n       t0.[PreviouslyActiveMember] AS [PreviouslyActiveMember],\n       t0.[Created] AS [Created],\n       t0.[CreationChannel] AS [CreationChannel],\n       t0.[LastUpdated] AS [LastUpdated]\nFROM [dbo].[Members] AS t0",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767700671,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767700671,
+      "node": "G_execute",
+      "message": "'Settings' object has no attribute 'MSSQL_DRIVER'",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 222, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 69, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 96, in run_sql_query\n    engine = get_engine(settings)\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 45, in get_engine\n    _ENGINE = build_mssql_engine(settings)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 23, in build_mssql_engine\n    driver = settings.MSSQL_DRIVER\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pydantic\\main.py\", line 1026, in __getattr__\n    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\nAttributeError: 'Settings' object has no attribute 'MSSQL_DRIVER'\n"
+    }
+  ]
+}

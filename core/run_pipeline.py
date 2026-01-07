@@ -168,18 +168,37 @@ def run_agentic_pipeline(
     # E) SQL generation
     # -------------------------
     try:
-        sql_bundle = sql_agent.generate_sql(
-            plan=plan,
-            allowed_tables=allowed_tables,
-            large_mode=bool(plan.get("large_mode", large_mode)),
-        )
+        try:
+            sql_bundle = sql_agent.generate_sql(
+                plan=plan,
+                allowed_tables=allowed_tables,
+                large_mode=bool(plan.get("large_mode", large_mode)),
+            )
+        except ValueError as ve:
+            # Hard fallback: if plan tables invalid, force plan tables from allowlist/registry and retry once
+            reg = registry.load()
+            reg_tables = list((reg.get("tables") or {}).keys())
+            allow_ok = [t for t in allowed_tables if t in reg_tables] if allowed_tables else []
+            plan["tables"] = (allow_ok[:2] if allow_ok else reg_tables[:2])
+
+            trace_store.add_node(run_id, "E_sql_generation__recovered_tables", {
+                "reason": str(ve),
+                "plan_tables_after_recovery": plan["tables"],
+            })
+
+            sql_bundle = sql_agent.generate_sql(
+                plan=plan,
+                allowed_tables=allowed_tables,
+                large_mode=bool(plan.get("large_mode", large_mode)),
+            )
+
         trace_store.add_node(run_id, "E_sql_generation", sql_bundle)
         critique_e = critique.critique_step("E_sql_generation", sql_bundle)
         trace_store.add_node(run_id, "E_sql_generation__critique", critique_e)
+
     except Exception as e:
         trace_store.add_error(run_id, "E_sql_generation", str(e), traceback.format_exc())
         return {"run_id": run_id, "status": "failed", "error": f"SQL generation failed: {e}"}
-
     # -------------------------
     # F) SQL safety validation
     # -------------------------

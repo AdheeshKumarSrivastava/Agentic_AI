@@ -9,19 +9,12 @@ from knowledge_graph.schema_registry import SchemaRegistry
 
 class SQLAgent:
     """
-    Generates SELECT-only SQL Server queries with explicit columns.
-    Uses SchemaRegistry to ensure no hallucinated columns/tables.
+    SQL Server SELECT-only generator (no SELECT *) with registry validation.
 
-    Hardened behavior:
-    - Never crashes if plan.tables invalid/empty -> auto-recovers from allowlist/registry.
-    - Always explicit column list (no SELECT *).
-    - Parameterized filters (:p0 style).
-    - Respects Large Query Mode:
-        - large_mode=True => TOP(MAX_RETURNED_ROWS)
-        - else => TOP(DEFAULT_EXPLORATORY_TOP)
-    - If plan indicates aggregation, generates GROUP BY.
-    - Supports optional ORDER BY (safe).
-    - Supports optional time bucketing for SQL Server.
+    HARDENED:
+    - If plan.tables invalid/empty -> auto-recover from allowlist/registry.
+    - If allowlist empty -> fallback to registry tables.
+    - Never throws "No valid tables..." anymore.
     """
 
     def __init__(self, settings: Settings, registry: SchemaRegistry):
@@ -38,34 +31,34 @@ class SQLAgent:
         reg = self.registry.load()
         reg_tables = list((reg.get("tables") or {}).keys())
 
-        # -------------------------
-        # 1) Validate + recover tables safely
-        # -------------------------
+        if not reg_tables:
+            raise ValueError("Schema registry has no tables. Run schema bootstrap/ingestion first.")
+
+        # ---------- table validation + recovery ----------
         planned_tables = plan.get("tables", [])
         planned_tables = planned_tables if isinstance(planned_tables, list) else []
 
-        # keep only tables that exist in registry
         tables = [t for t in planned_tables if isinstance(t, str) and t in reg_tables]
 
-        # apply allowlist
+        allow_ok: List[str] = []
         if allowed_tables:
             allow_ok = [t for t in allowed_tables if isinstance(t, str) and t in reg_tables]
             tables = [t for t in tables if t in allow_ok]
 
-        # recovery path (NEVER crash)
+        # ✅ Recovery (never crash)
+        recovered = False
         if not tables:
-            tables = self._recover_tables(reg_tables=reg_tables, allowed_tables=allowed_tables)
-            plan["tables"] = list(tables)  # persist recovery so downstream nodes see it
+            recovered = True
+            if allow_ok:
+                tables = allow_ok[:2]  # minimal safe set
+            else:
+                tables = reg_tables[:2]
 
-        if not tables:
-            # truly nothing available (empty registry)
-            raise ValueError("Schema registry has no tables. Run schema bootstrap/ingestion first.")
+            plan["tables"] = list(tables)  # persist so downstream sees it
 
         primary = tables[0]
 
-        # -------------------------
-        # 2) FROM + JOIN clauses
-        # -------------------------
+        # ---------- FROM + JOIN ----------
         joins = plan.get("joins", []) if isinstance(plan.get("joins", []), list) else []
 
         from_clause = f"FROM {self._fmt_table(primary)} AS t0"
@@ -85,11 +78,8 @@ class SQLAgent:
 
             if not all(isinstance(x, str) for x in [lt, rt, lk, rk]):
                 continue
-
-            # must be in the chosen tables set
             if lt not in tables or rt not in tables:
                 continue
-
             if not self.registry.has_column(lt, lk) or not self.registry.has_column(rt, rk):
                 continue
 
@@ -108,9 +98,7 @@ class SQLAgent:
                 f"ON {alias_map[lt]}.[{lk}] = {alias_map[rt]}.[{rk}]"
             )
 
-        # -------------------------
-        # 3) Determine aggregation mode
-        # -------------------------
+        # ---------- aggregation mode ----------
         metrics = plan.get("metrics", []) if isinstance(plan.get("metrics", []), list) else []
         is_agg = bool(
             plan.get("aggregation")
@@ -120,11 +108,9 @@ class SQLAgent:
 
         dims = [d for d in plan.get("dimensions", []) if isinstance(d, str)]
         time_field = plan.get("time_field") if isinstance(plan.get("time_field"), str) else None
-        time_grain = plan.get("time_grain") if isinstance(plan.get("time_grain"), str) else None  # day/week/month/year
+        time_grain = plan.get("time_grain") if isinstance(plan.get("time_grain"), str) else None
 
-        # -------------------------
-        # 4) SELECT columns
-        # -------------------------
+        # ---------- SELECT dims ----------
         dim_select_cols: List[str] = []
         group_by_cols: List[str] = []
 
@@ -134,21 +120,20 @@ class SQLAgent:
                 dim_select_cols.append(col_ref)
                 group_by_cols.append(col_ref.split(" AS ")[0].strip())
 
-        # time bucketing
+        # time bucket
         if time_field:
             tf = self._resolve_column(time_field, tables, alias_map)
             if tf:
                 if time_grain and is_agg:
                     tf_left, tf_alias = self._split_expr_alias(tf)
                     bucket_left = self._time_bucket_sqlserver(tf_left, time_grain)
-                    tf_bucket = f"{bucket_left} AS [{tf_alias}]"
-                    dim_select_cols.append(tf_bucket)
+                    dim_select_cols.append(f"{bucket_left} AS [{tf_alias}]")
                     group_by_cols.append(bucket_left)
                 else:
-                    if tf not in dim_select_cols:
-                        dim_select_cols.append(tf)
-                        group_by_cols.append(tf.split(" AS ")[0].strip())
+                    dim_select_cols.append(tf)
+                    group_by_cols.append(tf.split(" AS ")[0].strip())
 
+        # ---------- SELECT metrics ----------
         metric_select_cols: List[str] = []
         metric_expected_names: List[str] = []
 
@@ -162,18 +147,7 @@ class SQLAgent:
 
             if not isinstance(m_name, str) or not m_name.strip():
                 continue
-
-            # no agg => raw columns via depends_on
-            if not agg:
-                dep = m.get("depends_on")
-                if isinstance(dep, list):
-                    for c in dep:
-                        col_ref = self._resolve_column(str(c), tables, alias_map)
-                        if col_ref and col_ref not in dim_select_cols and col_ref not in metric_select_cols:
-                            metric_select_cols.append(col_ref)
-                continue
-
-            if not isinstance(field, str):
+            if not agg or not isinstance(field, str):
                 continue
 
             base_col = self._resolve_column(field, tables, alias_map)
@@ -181,24 +155,19 @@ class SQLAgent:
                 continue
 
             base_left = base_col.split(" AS ")[0].strip()
-            sql_agg = self._agg_sql(agg, base_left)
-
             alias = self._safe_alias(m_name)
-            metric_select_cols.append(f"{sql_agg} AS [{alias}]")
+            metric_select_cols.append(f"{self._agg_sql(agg, base_left)} AS [{alias}]")
             metric_expected_names.append(alias)
 
-        # If nothing selected, fall back to first N columns from primary
+        # fallback: pick first columns from primary
         if not dim_select_cols and not metric_select_cols:
-            cols = self.registry.table_columns(primary)
-            cols = cols[: min(12, len(cols))]
+            cols = self.registry.table_columns(primary)[:12]
             dim_select_cols = [f"{alias_map[primary]}.[{c}] AS [{c}]" for c in cols]
             is_agg = False
 
         select_cols = self._dedupe_by_alias(dim_select_cols + metric_select_cols)
 
-        # -------------------------
-        # 5) WHERE filters (parameterized)
-        # -------------------------
+        # ---------- WHERE ----------
         params: Dict[str, Any] = {}
         where_parts: List[str] = []
 
@@ -213,20 +182,20 @@ class SQLAgent:
             col_ref = self._resolve_column(field, tables, alias_map)
             if not col_ref:
                 continue
-            left = col_ref.split(" AS ")[0].strip()
 
+            left = col_ref.split(" AS ")[0].strip()
             p = f"p{idx}"
             op_l = op.lower()
 
             if op_l == "in":
                 if not isinstance(value, list) or not value:
                     continue
-                placeholders = []
+                ph = []
                 for j, vv in enumerate(value):
                     pj = f"{p}_{j}"
                     params[pj] = vv
-                    placeholders.append(f":{pj}")
-                where_parts.append(f"{left} IN ({', '.join(placeholders)})")
+                    ph.append(f":{pj}")
+                where_parts.append(f"{left} IN ({', '.join(ph)})")
             else:
                 safe_ops = {"=", "!=", "<>", ">", ">=", "<", "<=", "like"}
                 if op_l not in safe_ops:
@@ -236,18 +205,12 @@ class SQLAgent:
 
         where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
 
-        # -------------------------
-        # 6) GROUP BY
-        # -------------------------
+        # ---------- GROUP BY ----------
         group_by_clause = ""
-        if is_agg:
-            gb = [c for c in group_by_cols if c]
-            if gb:
-                group_by_clause = "GROUP BY " + ", ".join(gb)
+        if is_agg and group_by_cols:
+            group_by_clause = "GROUP BY " + ", ".join([c for c in group_by_cols if c])
 
-        # -------------------------
-        # 7) ORDER BY (safe)
-        # -------------------------
+        # ---------- ORDER BY ----------
         order_by_clause = ""
         order_by = plan.get("order_by")
         if isinstance(order_by, list) and order_by:
@@ -262,8 +225,7 @@ class SQLAgent:
 
                 col_ref = self._resolve_column(ob_field, tables, alias_map)
                 if col_ref:
-                    left = col_ref.split(" AS ")[0].strip()
-                    order_parts.append(f"{left} {ob_dir}")
+                    order_parts.append(f"{col_ref.split(' AS ')[0].strip()} {ob_dir}")
                 else:
                     safe_alias = self._safe_alias(ob_field)
                     if safe_alias in metric_expected_names:
@@ -272,11 +234,10 @@ class SQLAgent:
             if order_parts:
                 order_by_clause = "ORDER BY " + ", ".join(order_parts)
 
-        # -------------------------
-        # 8) TOP selection (Large Query Mode)
-        # -------------------------
+        # ---------- TOP ----------
         if large_mode is None:
             large_mode = bool(plan.get("large_mode", False))
+
         top = int(self.settings.MAX_RETURNED_ROWS if large_mode else self.settings.DEFAULT_EXPLORATORY_TOP)
 
         sql = "\n".join(
@@ -294,39 +255,23 @@ class SQLAgent:
         expected = [self._alias_name(c) for c in select_cols]
         plan["expected_columns"] = expected
 
+        print("planned_tables",planned_tables)
+        print("allowed_tables_count",len(allowed_tables))
+        print("registry_tables_count",len(reg.get("tables",{})))
+
         return {
             "sql": sql,
             "params": params,
             "expected_columns": expected,
             "is_aggregated": is_agg,
             "top": top,
-            "order_by": order_by,
             "time_grain": time_grain,
-            "recovered_tables": bool(planned_tables is None or planned_tables == [] or (planned_tables and planned_tables != tables)),
             "final_tables": list(tables),
+            "recovered_tables": recovered,
         }
 
-    # -----------------------------
-    # Recovery logic
-    # -----------------------------
-    def _recover_tables(self, *, reg_tables: List[str], allowed_tables: List[str]) -> List[str]:
-        # best: allowlist ∩ registry
-        if allowed_tables:
-            allow_ok = [t for t in allowed_tables if isinstance(t, str) and t in reg_tables]
-            if allow_ok:
-                return allow_ok[:2]  # keep minimal to reduce join risk
-        # fallback: first registry tables
-        return reg_tables[:2] if reg_tables else []
-
-    # -----------------------------
-    # Helpers
-    # -----------------------------
+    # ---------------- helpers ----------------
     def _fmt_table(self, table_key: str) -> str:
-        """
-        Accepts:
-          - "schema.table" -> "[schema].[table]"
-          - "table"        -> "[table]"
-        """
         table_key = (table_key or "").strip()
         if "." in table_key:
             schema, table = table_key.split(".", 1)
@@ -340,7 +285,7 @@ class SQLAgent:
 
         parts = hint.split(".")
 
-        # schema.table.col (3-part)
+        # schema.table.col
         if len(parts) == 3:
             tpart = f"{parts[0]}.{parts[1]}"
             cpart = parts[2]
@@ -349,11 +294,10 @@ class SQLAgent:
                 return f"{a}.[{cpart}] AS [{cpart}]"
             return None
 
-        # reject ambiguous table.col
+        # reject table.col ambiguity
         if len(parts) == 2:
             return None
 
-        # match by column name across tables
         for t in tables:
             for c in self.registry.table_columns(t):
                 if c.lower() == hint.lower():
@@ -375,9 +319,9 @@ class SQLAgent:
         seen = set()
         out: List[str] = []
         for c in col_exprs:
-            alias = self._alias_name(c).strip()
-            if alias and alias not in seen:
-                seen.add(alias)
+            a = self._alias_name(c).strip()
+            if a and a not in seen:
+                seen.add(a)
                 out.append(c)
         return out
 
