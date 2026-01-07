@@ -21,8 +21,11 @@ class Executor:
     def __post_init__(self) -> None:
         self.cache = SnapshotCache(Path(self.settings.CACHE_DIR))
 
-        # Safe fallback if DUCKDB_PATH not present (prevents crashes)
-        duckdb_path = getattr(self.settings, "DUCKDB_PATH", str(Path(self.settings.CACHE_DIR) / "catalog.duckdb"))
+        duckdb_path = getattr(
+            self.settings,
+            "DUCKDB_PATH",
+            str(Path(self.settings.CACHE_DIR) / "catalog.duckdb"),
+        )
         self.duckdb = DuckDBStore(Path(duckdb_path))
 
     def _cache_key(self, sql: str, params: Dict[str, Any]) -> str:
@@ -32,13 +35,12 @@ class Executor:
     def run(self, *, sql: str, params: Dict[str, Any]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
         """
         Executes SQL safely (SELECT-only assumed validated upstream).
-        Uses Parquet snapshot caching.
-        Registers cached snapshots into DuckDB catalog for offline dashboards.
+        Uses snapshot caching + DuckDB registration.
         """
         start = time.time()
         cache_key = self._cache_key(sql, params or {})
 
-        # 1) Try cache first
+        # 1️⃣ Cache hit
         cached = self.cache.get(cache_key)
         if cached is not None:
             df = cached
@@ -46,23 +48,21 @@ class Executor:
             if parquet_path and parquet_path.exists():
                 self.duckdb.register_parquet(cache_key, parquet_path)
 
-            meta = {
+            return df, {
                 "cache_key": cache_key,
                 "cache_hit": True,
                 "rows": int(len(df)),
                 "seconds": round(time.time() - start, 4),
                 "mode": "cache",
             }
-            return df, meta
 
-        # 2) Offline-only mode blocks DB calls
+        # 2️⃣ Offline-only guard
         if bool(getattr(self.settings, "OFFLINE_ONLY", False)):
             raise RuntimeError(
-                "OFFLINE_ONLY is enabled and no cache snapshot exists for this query. "
-                "Run once with OFFLINE_ONLY=false to populate cache."
+                "OFFLINE_ONLY enabled and no cached snapshot exists."
             )
 
-        # 3) Execute against DB (match YOUR Settings fields)
+        # 3️⃣ Execute DB query
         timeout_seconds = int(getattr(self.settings, "STATEMENT_TIMEOUT_SECONDS", 3600))
         max_rows = int(getattr(self.settings, "MAX_RETURNED_ROWS", 200000))
 
@@ -71,20 +71,19 @@ class Executor:
             params=params or {},
             timeout_seconds=timeout_seconds,
             max_rows=max_rows,
-            settings=self.settings,  # pass settings so db layer uses same connection config
+            settings=self.settings,
         )
 
-        # 4) Cache to parquet
+        # 4️⃣ Cache result
         self.cache.put(cache_key, df)
         parquet_path = self.cache.path_for_key(cache_key)
         if parquet_path and parquet_path.exists():
             self.duckdb.register_parquet(cache_key, parquet_path)
 
-        meta = {
+        return df, {
             "cache_key": cache_key,
             "cache_hit": False,
             "rows": int(len(df)),
             "seconds": round(time.time() - start, 4),
             "mode": "db",
         }
-        return df, meta

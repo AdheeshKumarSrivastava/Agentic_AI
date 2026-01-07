@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional, List
 import traceback
-
+import threading
+from contextlib import contextmanager
 
 PIPELINE_STEPS = [
     "A_intent",
@@ -20,6 +21,44 @@ PIPELINE_STEPS = [
 ]
 
 
+class MaxConnectionsPerRunError(RuntimeError):
+    pass
+
+
+class RunConnectionGovernor:
+    """
+    Hard cap on DB connections opened during a single run.
+    This protects you from leaks + runaway engine/connection creation.
+    """
+
+    def __init__(self, max_connections: int = 10):
+        self.max_connections = int(max_connections)
+        self._lock = threading.Lock()
+        self._count = 0
+
+    @contextmanager
+    def acquire(self, purpose: str = ""):
+        with self._lock:
+            self._count += 1
+            if self._count > self.max_connections:
+                raise MaxConnectionsPerRunError(
+                    f"Maximum number of connections per run exceeded ({self._count}/{self.max_connections}). "
+                    f"Purpose={purpose}"
+                )
+        try:
+            yield
+        finally:
+            # We decrement on close attempts. Even if a connection is leaked,
+            # pool_size + max_overflow prevents unbounded growth.
+            with self._lock:
+                self._count = max(0, self._count - 1)
+
+    @property
+    def used(self) -> int:
+        with self._lock:
+            return self._count
+
+
 def run_agentic_pipeline(
     *,
     settings,
@@ -33,15 +72,15 @@ def run_agentic_pipeline(
 ) -> Dict[str, Any]:
     """
     Runs A→L deterministically, persisting node outputs to TraceStore.
-    Human review packet is applied ONLY if provided explicitly.
 
-    large_mode:
-      - True: SQLAgent uses TOP(MAX_RETURNED_ROWS)
-      - False: SQLAgent uses TOP(DEFAULT_EXPLORATORY_TOP)
+    CRITICAL FIX:
+    - Build ONE shared SQL engine per run (no new engines inside nodes).
+    - Executor must reuse this engine.
+    - Run-level connection governor prevents runaway open/close loops.
     """
 
     # -------------------------
-    # LAZY IMPORTS (break circular imports)
+    # LAZY IMPORTS
     # -------------------------
     from knowledge_graph.schema_registry import SchemaRegistry
     from knowledge_graph.store import KnowledgeGraphStore
@@ -57,6 +96,20 @@ def run_agentic_pipeline(
 
     from observability.query_log import QueryLogStore
 
+    # ✅ IMPORTANT: your DB module must expose build_mssql_engine()
+    # If you already have it elsewhere, import from there.
+    from db import build_mssql_engine
+
+    # -------------------------
+    # Governor + shared engine
+    # -------------------------
+    governor = RunConnectionGovernor(max_connections=getattr(settings, "MAX_CONNECTIONS_PER_RUN", 10))
+
+    # Build ONE engine per run. Pool limits also prevent runaway.
+    # This engine must be reused in Executor (and anywhere else you query DB).
+    with governor.acquire("build_engine"):
+        engine = build_mssql_engine(settings)
+
     # -------------------------
     # Init shared stores/agents
     # -------------------------
@@ -66,7 +119,10 @@ def run_agentic_pipeline(
     planner = PlannerAgent(settings=settings, kg=kg, registry=registry)
     sql_agent = SQLAgent(settings=settings, registry=registry)
     guard = SQLSafetyGuard(settings=settings)
-    executor = Executor(settings=settings)
+
+    # ✅ Executor MUST reuse shared engine + governor
+    executor = Executor(settings=settings, engine=engine, governor=governor)
+
     dq = DataQualityAgent()
     insight = InsightAgent()
     dashboard = DashboardAgent(settings=settings)
@@ -75,7 +131,6 @@ def run_agentic_pipeline(
 
     final: Dict[str, Any] = {"run_id": run_id, "status": "started"}
 
-    # Record run-level config into traces
     trace_store.add_node(
         run_id,
         "RUN_CONFIG",
@@ -84,6 +139,7 @@ def run_agentic_pipeline(
             "large_mode": bool(large_mode),
             "allowed_tables_count": len(allowed_tables),
             "allowed_tables_preview": allowed_tables[:50],
+            "max_connections_per_run": governor.max_connections,
         },
     )
 
@@ -121,8 +177,6 @@ def run_agentic_pipeline(
             schema_reasoning=schema_reasoning,
             allowed_tables=allowed_tables,
         )
-
-        # Attach large_mode to plan
         plan["large_mode"] = bool(large_mode)
 
         trace_store.add_node(run_id, "C_plan", plan)
@@ -175,16 +229,16 @@ def run_agentic_pipeline(
                 large_mode=bool(plan.get("large_mode", large_mode)),
             )
         except ValueError as ve:
-            # Hard fallback: if plan tables invalid, force plan tables from allowlist/registry and retry once
             reg = registry.load()
             reg_tables = list((reg.get("tables") or {}).keys())
             allow_ok = [t for t in allowed_tables if t in reg_tables] if allowed_tables else []
             plan["tables"] = (allow_ok[:2] if allow_ok else reg_tables[:2])
 
-            trace_store.add_node(run_id, "E_sql_generation__recovered_tables", {
-                "reason": str(ve),
-                "plan_tables_after_recovery": plan["tables"],
-            })
+            trace_store.add_node(
+                run_id,
+                "E_sql_generation__recovered_tables",
+                {"reason": str(ve), "plan_tables_after_recovery": plan["tables"]},
+            )
 
             sql_bundle = sql_agent.generate_sql(
                 plan=plan,
@@ -196,9 +250,13 @@ def run_agentic_pipeline(
         critique_e = critique.critique_step("E_sql_generation", sql_bundle)
         trace_store.add_node(run_id, "E_sql_generation__critique", critique_e)
 
+    except MaxConnectionsPerRunError as e:
+        trace_store.add_error(run_id, "E_sql_generation", str(e), traceback.format_exc())
+        return {"run_id": run_id, "status": "failed", "error": f"Run terminated: {e}"}
     except Exception as e:
         trace_store.add_error(run_id, "E_sql_generation", str(e), traceback.format_exc())
         return {"run_id": run_id, "status": "failed", "error": f"SQL generation failed: {e}"}
+
     # -------------------------
     # F) SQL safety validation
     # -------------------------
@@ -216,7 +274,7 @@ def run_agentic_pipeline(
         return {"run_id": run_id, "status": "failed", "error": f"Safety validation failed: {e}"}
 
     # -------------------------
-    # G) Execute SQL safely (with cache)
+    # G) Execute SQL safely (shared engine)
     # -------------------------
     try:
         df, exec_meta = executor.run(sql=sql_bundle["sql"], params=sql_bundle.get("params") or {})
@@ -224,6 +282,9 @@ def run_agentic_pipeline(
         query_logs.append(exec_meta)
         critique_g = critique.critique_step("G_execute", exec_meta)
         trace_store.add_node(run_id, "G_execute__critique", critique_g)
+    except MaxConnectionsPerRunError as e:
+        trace_store.add_error(run_id, "G_execute", str(e), traceback.format_exc())
+        return {"run_id": run_id, "status": "failed", "error": f"Run terminated: {e}"}
     except Exception as e:
         trace_store.add_error(run_id, "G_execute", str(e), traceback.format_exc())
         return {"run_id": run_id, "status": "failed", "error": f"Execution failed: {e}"}
