@@ -32,18 +32,18 @@ class SchemaAgent:
 
     def __init__(self, settings: Settings, kg: KnowledgeGraphStore, registry: SchemaRegistry):
         self.settings = settings
-        self.kg [self.kg] = kg
+        self.kg = kg
         self.registry = registry
         self.engine = build_engine(settings)
         self.content_store = ContentIndexStore(Path(self.settings.KNOWLEDGE_GRAPH_DIR))
 
     def refresh(
         self,
-        sample_rows: int = 50,
+        sample_rows: int = 20000,
         top_tables: int | None = None,
         build_content_index: bool = True,
-        content_top_values: int = 20,
-        content_profile_cols_max: int = 25,
+        content_top_values: int = 2000,
+        content_profile_cols_max: int = 250,
         skip_top_values_for_id_cols: bool = True,
     ) -> Dict[str, Any]:
         """

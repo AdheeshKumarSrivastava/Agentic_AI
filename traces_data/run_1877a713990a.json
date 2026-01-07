@@ -1,0 +1,707 @@
+{
+  "run_id": "1877a713990a",
+  "created_at": 1767769053,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767769053,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 12,
+        "allowed_tables_preview": [
+          "dbo.ProgramDetailsHistory",
+          "dbo.ProgramDetails",
+          "dbo.Users",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.Members",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardCampaigns",
+          "dbo.CPSMembers"
+        ],
+        "max_connections_per_run": 10
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767769250,
+      "payload": {
+        "kpis": [
+          "Total Users",
+          "Unique Users",
+          "Total Rewards Issued",
+          "Total Rewards Redeemed"
+        ],
+        "dimensions": [
+          "User Segment",
+          "Reward Type",
+          "Geography",
+          "Campaign Name"
+        ],
+        "time_range": null,
+        "granularity": null,
+        "segments": [
+          "New Users",
+          "Returning Users",
+          "Users by Age Group",
+          "Users by Gender",
+          "Users by Membership Tier"
+        ],
+        "filters": [
+          {
+            "field": "DateRange",
+            "op": "between",
+            "value": [
+              "2023-01-01",
+              "2023-12-31"
+            ]
+          },
+          {
+            "field": "Geography",
+            "op": "in",
+            "value": [
+              "US",
+              "CA"
+            ]
+          }
+        ],
+        "confidence": 0.95,
+        "notes": "Dashboard should include trends over time and compare different segments."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767769250,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767769250,
+      "payload": {
+        "candidate_tables": [
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.Users",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.CPSMembers"
+        ],
+        "scoring_top": [
+          [
+            9.0,
+            "dbo.RewardCampaigns"
+          ],
+          [
+            8.0,
+            "dbo.RewardsAccountQueryAuditLogs"
+          ],
+          [
+            8.0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          [
+            8.0,
+            "dbo.Users"
+          ],
+          [
+            7.0,
+            "dbo.ProgramDetails"
+          ],
+          [
+            7.0,
+            "dbo.ProgramDetailsHistory"
+          ],
+          [
+            2.5,
+            "dbo.Members"
+          ],
+          [
+            2.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            2.0,
+            "dbo.Members_US"
+          ],
+          [
+            1.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigsMaster"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigsMstr"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.RewardCampaigns": {
+            "total_score": 9.0,
+            "schema_score": 9.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:name",
+              "col:type",
+              "table:reward",
+              "table:campaign",
+              "col:campaign"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          },
+          "dbo.RewardsAccountQueryAuditLogs": {
+            "total_score": 8.0,
+            "schema_score": 8.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:name",
+              "table:reward",
+              "table:rewards",
+              "col:user"
+            ],
+            "matched_content": [],
+            "row_count": 942,
+            "has_content_index": false
+          },
+          "dbo.RewardsRedemptionAuditLogs": {
+            "total_score": 8.0,
+            "schema_score": 8.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:age",
+              "col:type",
+              "table:reward",
+              "table:rewards"
+            ],
+            "matched_content": [],
+            "row_count": 315694,
+            "has_content_index": false
+          },
+          "dbo.Users": {
+            "total_score": 8.0,
+            "schema_score": 8.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:name",
+              "table:users",
+              "table:user",
+              "col:user"
+            ],
+            "matched_content": [],
+            "row_count": 56,
+            "has_content_index": false
+          },
+          "dbo.ProgramDetails": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:tier",
+              "col:age",
+              "col:type",
+              "col:reward",
+              "col:rewards",
+              "col:segment",
+              "col:include"
+            ],
+            "matched_content": [],
+            "row_count": 15,
+            "has_content_index": false
+          },
+          "dbo.ProgramDetailsHistory": {
+            "total_score": 7.0,
+            "schema_score": 7.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:tier",
+              "col:age",
+              "col:type",
+              "col:reward",
+              "col:rewards",
+              "col:segment",
+              "col:include"
+            ],
+            "matched_content": [],
+            "row_count": 0,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 2.5,
+            "schema_score": 2.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:tier",
+              "col:age"
+            ],
+            "matched_content": [],
+            "row_count": 10702,
+            "has_content_index": false
+          },
+          "dbo.Members_02022024": {
+            "total_score": 2.0,
+            "schema_score": 2.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:tier",
+              "col:age"
+            ],
+            "matched_content": [],
+            "row_count": 18593823,
+            "has_content_index": false
+          },
+          "dbo.Members_US": {
+            "total_score": 2.0,
+            "schema_score": 2.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:tier",
+              "col:age"
+            ],
+            "matched_content": [],
+            "row_count": 5767824,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:name"
+            ],
+            "matched_content": [],
+            "row_count": 1413172,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "age",
+          "campaign",
+          "compare",
+          "different",
+          "gender",
+          "geography",
+          "group",
+          "include",
+          "issued",
+          "membership",
+          "name",
+          "new",
+          "over",
+          "redeemed",
+          "returning",
+          "reward",
+          "rewards",
+          "segment",
+          "segments",
+          "should",
+          "tier",
+          "time",
+          "total",
+          "trends",
+          "type",
+          "unique",
+          "user",
+          "users"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767769250,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767772081,
+      "payload": {
+        "tables": [
+          "dbo.Members",
+          "dbo.Members_US",
+          "dbo.CPSMembers"
+        ],
+        "joins": [
+          {
+            "left_table": "dbo.Members",
+            "right_table": "dbo.Members_US",
+            "left_key": "Id",
+            "right_key": "MemberKey",
+            "join_type": "INNER"
+          },
+          {
+            "left_table": "dbo.Members_CPSDataCollected",
+            "right_table": "dbo.CPSMembers",
+            "left_key": "MemberKey",
+            "right_key": "MemberKey",
+            "join_type": "LEFT"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "TotalActiveMembers",
+            "agg": "COUNT",
+            "field": "dbo.Members.Id",
+            "depends_on": [
+              "dbo.Members.IsActive = 1"
+            ]
+          },
+          {
+            "name": "UniqueCPSDataCollected",
+            "agg": "COUNT DISTINCT",
+            "field": "dbo.Members_CPSDataCollected.MemberKey",
+            "depends_on": [
+              "dbo.Members_CPSDataCollected.IsCPSDataCollected = 1"
+            ]
+          }
+        ],
+        "dimensions": [
+          "dbo.Members.LanguageCode",
+          "dbo.Members.Program_ID",
+          "dbo.Members.Created",
+          "dbo.Members.LastUpdated"
+        ],
+        "filters": [
+          {
+            "field": "dbo.Members.IsActive",
+            "operator": "=",
+            "value": "1"
+          },
+          {
+            "field": "dbo.Members_CPSDataCollected.IsCPSDataCollected",
+            "operator": "=",
+            "value": "1"
+          }
+        ],
+        "time_field": "dbo.Members.LastUpdated",
+        "time_grain": "DAY",
+        "order_by": [
+          {
+            "field": "dbo.Members.LastUpdated",
+            "dir": "DESC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "BAR_CHART",
+            "title": "Active Members by Program",
+            "x": "dbo.Members.Program_ID",
+            "y": "TotalActiveMembers",
+            "color": "dbo.Members.LanguageCode"
+          },
+          {
+            "type": "PIE_CHART",
+            "title": "CPS Data Collected",
+            "x": "UniqueCPSDataCollected",
+            "agg": "COUNT",
+            "color": "dbo.Members.USMemberFlag"
+          }
+        ],
+        "expected_columns": [
+          "dbo.Members.Id",
+          "dbo.Members.Program_ID",
+          "dbo.Members.LanguageCode",
+          "dbo.Members.IsActive",
+          "dbo.Members_CPSDataCollected.IsCPSDataCollected"
+        ],
+        "query_cost_risk": "medium",
+        "notes": "This query joins multiple tables to provide a summary of active members and CPS data collected, with visualizations for better understanding.",
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767772082,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767772082,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767772082,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.ProgramDetailsHistory",
+          "dbo.ProgramDetails",
+          "dbo.Users",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.Members",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.RewardCampaigns",
+          "dbo.CPSMembers"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.Members",
+            "dbo.Members_US",
+            "dbo.CPSMembers"
+          ],
+          "joins": [
+            {
+              "left_table": "dbo.Members",
+              "right_table": "dbo.Members_US",
+              "left_key": "Id",
+              "right_key": "MemberKey",
+              "join_type": "INNER"
+            },
+            {
+              "left_table": "dbo.Members_CPSDataCollected",
+              "right_table": "dbo.CPSMembers",
+              "left_key": "MemberKey",
+              "right_key": "MemberKey",
+              "join_type": "LEFT"
+            }
+          ],
+          "metrics": [
+            {
+              "name": "TotalActiveMembers",
+              "agg": "COUNT",
+              "field": "dbo.Members.Id",
+              "depends_on": [
+                "dbo.Members.IsActive = 1"
+              ]
+            },
+            {
+              "name": "UniqueCPSDataCollected",
+              "agg": "COUNT DISTINCT",
+              "field": "dbo.Members_CPSDataCollected.MemberKey",
+              "depends_on": [
+                "dbo.Members_CPSDataCollected.IsCPSDataCollected = 1"
+              ]
+            }
+          ],
+          "dimensions": [
+            "dbo.Members.LanguageCode",
+            "dbo.Members.Program_ID",
+            "dbo.Members.Created",
+            "dbo.Members.LastUpdated"
+          ],
+          "filters": [
+            {
+              "field": "dbo.Members.IsActive",
+              "operator": "=",
+              "value": "1"
+            },
+            {
+              "field": "dbo.Members_CPSDataCollected.IsCPSDataCollected",
+              "operator": "=",
+              "value": "1"
+            }
+          ],
+          "time_field": "dbo.Members.LastUpdated",
+          "time_grain": "DAY",
+          "order_by": [
+            {
+              "field": "dbo.Members.LastUpdated",
+              "dir": "DESC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "BAR_CHART",
+              "title": "Active Members by Program",
+              "x": "dbo.Members.Program_ID",
+              "y": "TotalActiveMembers",
+              "color": "dbo.Members.LanguageCode"
+            },
+            {
+              "type": "PIE_CHART",
+              "title": "CPS Data Collected",
+              "x": "UniqueCPSDataCollected",
+              "agg": "COUNT",
+              "color": "dbo.Members.USMemberFlag"
+            }
+          ],
+          "expected_columns": [
+            "dbo.Members.Id",
+            "dbo.Members.Program_ID",
+            "dbo.Members.LanguageCode",
+            "dbo.Members.IsActive",
+            "dbo.Members_CPSDataCollected.IsCPSDataCollected"
+          ],
+          "query_cost_risk": "medium",
+          "notes": "This query joins multiple tables to provide a summary of active members and CPS data collected, with visualizations for better understanding.",
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [
+            "Total Users",
+            "Unique Users",
+            "Total Rewards Issued",
+            "Total Rewards Redeemed"
+          ],
+          "dimensions": [
+            "User Segment",
+            "Reward Type",
+            "Geography",
+            "Campaign Name"
+          ],
+          "time_range": null,
+          "granularity": null,
+          "segments": [
+            "New Users",
+            "Returning Users",
+            "Users by Age Group",
+            "Users by Gender",
+            "Users by Membership Tier"
+          ],
+          "filters": [
+            {
+              "field": "DateRange",
+              "op": "between",
+              "value": [
+                "2023-01-01",
+                "2023-12-31"
+              ]
+            },
+            {
+              "field": "Geography",
+              "op": "in",
+              "value": [
+                "US",
+                "CA"
+              ]
+            }
+          ],
+          "confidence": 0.95,
+          "notes": "Dashboard should include trends over time and compare different segments."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767772082,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767772082,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[LanguageCode] AS [LanguageCode],\n  t0.[Program_ID] AS [Program_ID],\n  t0.[Created] AS [Created],\n  t0.[LastUpdated] AS [LastUpdated],\n  COUNT(1) AS [TotalActiveMembers]\nFROM [dbo].[Members] AS t0\nINNER JOIN [dbo].[Members_US] AS t1 ON t0.[Id] = t1.[MemberKey]\nWHERE t0.[IsActive] = :p0\nGROUP BY t0.[LanguageCode], t0.[Program_ID], t0.[Created], t0.[LastUpdated], DATEADD(day, DATEDIFF(day, 0, t0.[LastUpdated]), 0)\nORDER BY t0.[LastUpdated] DESC",
+        "params": {
+          "p0": "1"
+        },
+        "expected_columns": [
+          "LanguageCode",
+          "Program_ID",
+          "Created",
+          "LastUpdated",
+          "TotalActiveMembers"
+        ],
+        "is_aggregated": true,
+        "top": 200000,
+        "time_grain": "DAY",
+        "final_tables": [
+          "dbo.Members",
+          "dbo.Members_US",
+          "dbo.CPSMembers"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767772082,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767772082,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[LanguageCode] AS [LanguageCode],\n       t0.[Program_ID] AS [Program_ID],\n       t0.[Created] AS [Created],\n       t0.[LastUpdated] AS [LastUpdated],\n       COUNT(1) AS [TotalActiveMembers]\nFROM [dbo].[Members] AS t0\nINNER JOIN [dbo].[Members_US] AS t1 ON t0.[Id] = t1.[MemberKey]\nWHERE t0.[IsActive] = :p0\nGROUP BY t0.[LanguageCode],\n         t0.[Program_ID],\n         t0.[Created],\n         t0.[LastUpdated],\n         DATEADD(DAY, DATEDIFF(DAY, 0, t0.[LastUpdated]), 0)\nORDER BY t0.[LastUpdated] DESC",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767772082,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767772098,
+      "node": "G_execute",
+      "message": "(pyodbc.DataError) ('22018', '[22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Operand type clash: uniqueidentifier is incompatible with bigint (206) (SQLExecDirectW); [22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)')\n[SQL: SELECT TOP (200000)\n  t0.[LanguageCode] AS [LanguageCode],\n  t0.[Program_ID] AS [Program_ID],\n  t0.[Created] AS [Created],\n  t0.[LastUpdated] AS [LastUpdated],\n  COUNT(1) AS [TotalActiveMembers]\nFROM [dbo].[Members] AS t0\nINNER JOIN [dbo].[Members_US] AS t1 ON t0.[Id] = t1.[MemberKey]\nWHERE t0.[IsActive] = ?\nGROUP BY t0.[LanguageCode], t0.[Program_ID], t0.[Created], t0.[LastUpdated], DATEADD(day, DATEDIFF(day, 0, t0.[LastUpdated]), 0)\nORDER BY t0.[LastUpdated] DESC]\n[parameters: ('1',)]\n(Background on this error at: https://sqlalche.me/e/20/9h9h)",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\default.py\", line 952, in do_execute\n    cursor.execute(statement, parameters)\npyodbc.DataError: ('22018', '[22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Operand type clash: uniqueidentifier is incompatible with bigint (206) (SQLExecDirectW); [22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)')\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 280, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 66, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 158, in run_sql_query\n    it = pd.read_sql_query(\n         ^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 528, in read_sql_query\n    return pandas_sql.read_query(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 1848, in read_query\n    result = self.execute(sql, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 1672, in execute\n    return self.con.execute(sql, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1419, in execute\n    return meth(\n           ^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py\", line 527, in _execute_on_connection\n    return connection._execute_clauseelement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1641, in _execute_clauseelement\n    ret = self._execute_context(\n          ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1846, in _execute_context\n    return self._exec_single_context(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1986, in _exec_single_context\n    self._handle_dbapi_exception(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 2363, in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\default.py\", line 952, in do_execute\n    cursor.execute(statement, parameters)\nsqlalchemy.exc.DataError: (pyodbc.DataError) ('22018', '[22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Operand type clash: uniqueidentifier is incompatible with bigint (206) (SQLExecDirectW); [22018] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)')\n[SQL: SELECT TOP (200000)\n  t0.[LanguageCode] AS [LanguageCode],\n  t0.[Program_ID] AS [Program_ID],\n  t0.[Created] AS [Created],\n  t0.[LastUpdated] AS [LastUpdated],\n  COUNT(1) AS [TotalActiveMembers]\nFROM [dbo].[Members] AS t0\nINNER JOIN [dbo].[Members_US] AS t1 ON t0.[Id] = t1.[MemberKey]\nWHERE t0.[IsActive] = ?\nGROUP BY t0.[LanguageCode], t0.[Program_ID], t0.[Created], t0.[LastUpdated], DATEADD(day, DATEDIFF(day, 0, t0.[LastUpdated]), 0)\nORDER BY t0.[LastUpdated] DESC]\n[parameters: ('1',)]\n(Background on this error at: https://sqlalche.me/e/20/9h9h)\n"
+    }
+  ]
+}

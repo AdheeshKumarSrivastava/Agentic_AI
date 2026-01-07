@@ -1012,7 +1012,7 @@
     "dbo.MemberOrders": {
       "schema": "dbo",
       "name": "MemberOrders",
-      "row_count": 41245,
+      "row_count": 41646,
       "columns": [
         {
           "name": "Id",
@@ -1151,7 +1151,7 @@
     "dbo.Members": {
       "schema": "dbo",
       "name": "Members",
-      "row_count": 10702,
+      "row_count": 10707,
       "columns": [
         {
           "name": "Id",
@@ -1796,7 +1796,7 @@
     "dbo.PMCDataProcessingActivityLog": {
       "schema": "dbo",
       "name": "PMCDataProcessingActivityLog",
-      "row_count": 6439,
+      "row_count": 6443,
       "columns": [
         {
           "name": "Id",
@@ -2367,7 +2367,7 @@
     "dbo.RewardsRedemptionAuditLogs": {
       "schema": "dbo",
       "name": "RewardsRedemptionAuditLogs",
-      "row_count": 315694,
+      "row_count": 321625,
       "columns": [
         {
           "name": "Id",

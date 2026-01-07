@@ -49,15 +49,37 @@ class DuckDBStore:
     def register_parquet(self, cache_key: str, parquet_path: Path) -> None:
         con = self._conn()
         try:
+            # 1) Ensure table exists
             con.execute(
                 """
-                INSERT INTO cache_catalog (cache_key, parquet_path)
-                VALUES (?, ?)
-                ON CONFLICT (cache_key) DO UPDATE
-                  SET parquet_path=excluded.parquet_path, created_at=CURRENT_TIMESTAMP
+                CREATE TABLE IF NOT EXISTS cache_catalog (
+                    cache_key TEXT PRIMARY KEY,
+                    parquet_path TEXT NOT NULL,
+                    created_at TIMESTAMP
+                );
+                """
+            )
+
+            # 2) If an old table exists without created_at, add it (migration-safe)
+            # DuckDB supports IF NOT EXISTS for ADD COLUMN in recent versions, but be safe with try/except.
+            try:
+                con.execute("ALTER TABLE cache_catalog ADD COLUMN created_at TIMESTAMP;")
+            except Exception:
+                # column already exists OR duckdb version differs -> ignore
+                pass
+
+            # 3) Correct UPSERT: CURRENT_TIMESTAMP is a VALUE, not a column
+            con.execute(
+                """
+                INSERT INTO cache_catalog (cache_key, parquet_path, created_at)
+                VALUES (?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT (cache_key) DO UPDATE SET
+                    parquet_path = excluded.parquet_path,
+                    created_at = CURRENT_TIMESTAMP;
                 """,
                 [cache_key, str(parquet_path)],
             )
+
         finally:
             con.close()
 

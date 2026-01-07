@@ -1,0 +1,635 @@
+{
+  "run_id": "39970c9ee846",
+  "created_at": 1767774861,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767774861,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 12,
+        "allowed_tables_preview": [
+          "dbo.MBPMemberCouponCount",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.DataChangeLog",
+          "dbo.MBPSBDetails",
+          "dbo.Members",
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr"
+        ],
+        "max_connections_per_run": 10
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767774932,
+      "payload": {
+        "kpis": [
+          "COUNT(dbo.Members.MemberID)",
+          "SUM(dbo.MBPMemberCouponCount.CouponCount)"
+        ],
+        "dimensions": [
+          "dbo.Members.Gender",
+          "dbo.Members.AgeGroup"
+        ],
+        "time_range": null,
+        "granularity": null,
+        "segments": [],
+        "filters": [
+          {
+            "field": "dbo.Members.MemberStatus",
+            "op": "=",
+            "value": "Active"
+          }
+        ],
+        "confidence": 0.85,
+        "notes": "Dashboard should include active members only and focus on member count and coupon usage."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767774932,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767774932,
+      "payload": {
+        "candidate_tables": [
+          "dbo.MBPMemberCouponCount",
+          "dbo.Members",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.ActivityAuditLogs",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPSBDetails",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.EnrollCampaigns",
+          "dbo.DataChangeLog"
+        ],
+        "scoring_top": [
+          [
+            21.0,
+            "dbo.MBPMemberCouponCount"
+          ],
+          [
+            12.5,
+            "dbo.Members"
+          ],
+          [
+            10.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            10.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            8.0,
+            "dbo.RewardsAccountQueryAuditLogs"
+          ],
+          [
+            5.0,
+            "dbo.ActivityAuditLogs"
+          ],
+          [
+            5.0,
+            "dbo.MBPConfigsMaster"
+          ],
+          [
+            5.0,
+            "dbo.MBPConfigsMstr"
+          ],
+          [
+            4.5,
+            "dbo.MBPSBDetails"
+          ],
+          [
+            4.0,
+            "dbo.BAUOptInFileProcesses"
+          ],
+          [
+            4.0,
+            "dbo.EnrollCampaigns"
+          ],
+          [
+            3.0,
+            "dbo.DataChangeLog"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.MBPMemberCouponCount": {
+            "total_score": 21.0,
+            "schema_score": 21.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:count",
+              "col:count",
+              "table:member",
+              "table:dbo",
+              "table:coupon",
+              "col:coupon",
+              "table:mbpmembercouponcount",
+              "table:couponcount",
+              "col:couponcount"
+            ],
+            "matched_content": [],
+            "row_count": 7,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 12.5,
+            "schema_score": 12.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:count",
+              "table:members",
+              "table:member",
+              "col:member",
+              "table:dbo",
+              "col:active"
+            ],
+            "matched_content": [],
+            "row_count": 10707,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers": {
+            "total_score": 10.0,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:members",
+              "table:member",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 1413172,
+            "has_content_index": false
+          },
+          "dbo.CPSMembers_US": {
+            "total_score": 10.0,
+            "schema_score": 10.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:members",
+              "table:member",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 812900,
+            "has_content_index": false
+          },
+          "dbo.RewardsAccountQueryAuditLogs": {
+            "total_score": 8.0,
+            "schema_score": 8.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:count",
+              "col:count",
+              "col:member",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 942,
+            "has_content_index": false
+          },
+          "dbo.ActivityAuditLogs": {
+            "total_score": 5.0,
+            "schema_score": 5.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "col:member",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 2648,
+            "has_content_index": false
+          },
+          "dbo.MBPConfigsMaster": {
+            "total_score": 5.0,
+            "schema_score": 5.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:dbo",
+              "col:active"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          },
+          "dbo.MBPConfigsMstr": {
+            "total_score": 5.0,
+            "schema_score": 5.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:dbo",
+              "col:active"
+            ],
+            "matched_content": [],
+            "row_count": 1,
+            "has_content_index": false
+          },
+          "dbo.MBPSBDetails": {
+            "total_score": 4.5,
+            "schema_score": 4.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [
+              "col:count",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 5,
+            "has_content_index": false
+          },
+          "dbo.BAUOptInFileProcesses": {
+            "total_score": 4.0,
+            "schema_score": 4.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 2845,
+            "has_content_index": false
+          },
+          "dbo.EnrollCampaigns": {
+            "total_score": 4.0,
+            "schema_score": 4.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:count",
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 220,
+            "has_content_index": false
+          },
+          "dbo.DataChangeLog": {
+            "total_score": 3.0,
+            "schema_score": 3.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "table:dbo"
+            ],
+            "matched_content": [],
+            "row_count": 0,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "active",
+          "agegroup",
+          "count",
+          "coupon",
+          "couponcount",
+          "dbo",
+          "focus",
+          "gender",
+          "include",
+          "mbpmembercouponcount",
+          "member",
+          "memberid",
+          "members",
+          "only",
+          "should",
+          "sum",
+          "usage"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767774932,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767775738,
+      "payload": {
+        "tables": [
+          "dbo.MBPMemberCouponCount",
+          "dbo.Members"
+        ],
+        "joins": [],
+        "metrics": [
+          {
+            "name": "TotalRecords",
+            "agg": "COUNT",
+            "field": "Id",
+            "depends_on": []
+          },
+          {
+            "name": "ProcessedFilesCount",
+            "agg": "COUNT",
+            "field": "Id",
+            "depends_on": [
+              "BAUOptInFileProcesses"
+            ]
+          }
+        ],
+        "dimensions": [
+          "Created",
+          "CountryCode"
+        ],
+        "filters": [
+          {
+            "field": "Status",
+            "operator": "=",
+            "value": 1
+          },
+          {
+            "field": "ProcessedDate",
+            "operator": ">=",
+            "value": "2023-01-01"
+          }
+        ],
+        "time_field": "Created",
+        "time_grain": "DAY",
+        "order_by": [
+          {
+            "field": "Created",
+            "dir": "DESC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "BAR_CHART",
+            "title": "Processed Files by Country",
+            "x": "CountryCode",
+            "y": "COUNT(Id)",
+            "color": "Status"
+          },
+          {
+            "type": "LINE_CHART",
+            "title": "Trend of Enroll Campaigns Over Time",
+            "x": "EnrollDate",
+            "y": "COUNT(Uid)",
+            "color": "CountryCode"
+          }
+        ],
+        "expected_columns": [
+          "MBPSBDetails.Id",
+          "BAUOptInFileProcesses.FileName",
+          "EnrollCampaigns.EnrollComplete"
+        ],
+        "query_cost_risk": "low",
+        "notes": "Schema is well-structured with minimal joins. Metrics and dimensions are appropriately defined for trend analysis.",
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767775738,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767775738,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767775738,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.MBPMemberCouponCount",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.DataChangeLog",
+          "dbo.MBPSBDetails",
+          "dbo.Members",
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.MBPMemberCouponCount",
+            "dbo.Members"
+          ],
+          "joins": [],
+          "metrics": [
+            {
+              "name": "TotalRecords",
+              "agg": "COUNT",
+              "field": "Id",
+              "depends_on": []
+            },
+            {
+              "name": "ProcessedFilesCount",
+              "agg": "COUNT",
+              "field": "Id",
+              "depends_on": [
+                "BAUOptInFileProcesses"
+              ]
+            }
+          ],
+          "dimensions": [
+            "Created",
+            "CountryCode"
+          ],
+          "filters": [
+            {
+              "field": "Status",
+              "operator": "=",
+              "value": 1
+            },
+            {
+              "field": "ProcessedDate",
+              "operator": ">=",
+              "value": "2023-01-01"
+            }
+          ],
+          "time_field": "Created",
+          "time_grain": "DAY",
+          "order_by": [
+            {
+              "field": "Created",
+              "dir": "DESC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "BAR_CHART",
+              "title": "Processed Files by Country",
+              "x": "CountryCode",
+              "y": "COUNT(Id)",
+              "color": "Status"
+            },
+            {
+              "type": "LINE_CHART",
+              "title": "Trend of Enroll Campaigns Over Time",
+              "x": "EnrollDate",
+              "y": "COUNT(Uid)",
+              "color": "CountryCode"
+            }
+          ],
+          "expected_columns": [
+            "MBPSBDetails.Id",
+            "BAUOptInFileProcesses.FileName",
+            "EnrollCampaigns.EnrollComplete"
+          ],
+          "query_cost_risk": "low",
+          "notes": "Schema is well-structured with minimal joins. Metrics and dimensions are appropriately defined for trend analysis.",
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [
+            "COUNT(dbo.Members.MemberID)",
+            "SUM(dbo.MBPMemberCouponCount.CouponCount)"
+          ],
+          "dimensions": [
+            "dbo.Members.Gender",
+            "dbo.Members.AgeGroup"
+          ],
+          "time_range": null,
+          "granularity": null,
+          "segments": [],
+          "filters": [
+            {
+              "field": "dbo.Members.MemberStatus",
+              "op": "=",
+              "value": "Active"
+            }
+          ],
+          "confidence": 0.85,
+          "notes": "Dashboard should include active members only and focus on member count and coupon usage."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767775738,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767775738,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[Created] AS [Created],\n  t0.[CountryCode] AS [CountryCode],\n  COUNT(1) AS [TotalRecords],\n  COUNT(1) AS [ProcessedFilesCount]\nFROM [dbo].[MBPMemberCouponCount] AS t0\n\nGROUP BY t0.[Created], t0.[CountryCode], DATEADD(day, DATEDIFF(day, 0, t0.[Created]), 0)\nORDER BY t0.[Created] DESC",
+        "params": {},
+        "expected_columns": [
+          "Created",
+          "CountryCode",
+          "TotalRecords",
+          "ProcessedFilesCount"
+        ],
+        "is_aggregated": true,
+        "top": 200000,
+        "time_grain": "DAY",
+        "final_tables": [
+          "dbo.MBPMemberCouponCount",
+          "dbo.Members"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767775738,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767775738,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[Created] AS [Created],\n       t0.[CountryCode] AS [CountryCode],\n       COUNT(1) AS [TotalRecords],\n       COUNT(1) AS [ProcessedFilesCount]\nFROM [dbo].[MBPMemberCouponCount] AS t0\nGROUP BY t0.[Created],\n         t0.[CountryCode],\n         DATEADD(DAY, DATEDIFF(DAY, 0, t0.[Created]), 0)\nORDER BY t0.[Created] DESC",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767775738,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767775745,
+      "node": "G_execute",
+      "message": "(pyodbc.ProgrammingError) ('42S22', \"[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207)\")\n[SQL: SELECT TOP (200000)\n  t0.[Created] AS [Created],\n  t0.[CountryCode] AS [CountryCode],\n  COUNT(1) AS [TotalRecords],\n  COUNT(1) AS [ProcessedFilesCount]\nFROM [dbo].[MBPMemberCouponCount] AS t0\n\nGROUP BY t0.[Created], t0.[CountryCode], DATEADD(day, DATEDIFF(day, 0, t0.[Created]), 0)\nORDER BY t0.[Created] DESC]\n(Background on this error at: https://sqlalche.me/e/20/f405)",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\default.py\", line 952, in do_execute\n    cursor.execute(statement, parameters)\npyodbc.ProgrammingError: ('42S22', \"[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207)\")\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 280, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 66, in run\n    df = run_sql_query(\n         ^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\db\\__init__.py\", line 158, in run_sql_query\n    it = pd.read_sql_query(\n         ^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 528, in read_sql_query\n    return pandas_sql.read_query(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 1848, in read_query\n    result = self.execute(sql, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\pandas\\io\\sql.py\", line 1672, in execute\n    return self.con.execute(sql, *args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1419, in execute\n    return meth(\n           ^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py\", line 527, in _execute_on_connection\n    return connection._execute_clauseelement(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1641, in _execute_clauseelement\n    ret = self._execute_context(\n          ^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1846, in _execute_context\n    return self._exec_single_context(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1986, in _exec_single_context\n    self._handle_dbapi_exception(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 2363, in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\base.py\", line 1967, in _exec_single_context\n    self.dialect.do_execute(\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\virtual_env\\Lib\\site-packages\\sqlalchemy\\engine\\default.py\", line 952, in do_execute\n    cursor.execute(statement, parameters)\nsqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError) ('42S22', \"[42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'CountryCode'. (207); [42S22] [Microsoft][ODBC Driver 18 for SQL Server][SQL Server]Invalid column name 'Created'. (207)\")\n[SQL: SELECT TOP (200000)\n  t0.[Created] AS [Created],\n  t0.[CountryCode] AS [CountryCode],\n  COUNT(1) AS [TotalRecords],\n  COUNT(1) AS [ProcessedFilesCount]\nFROM [dbo].[MBPMemberCouponCount] AS t0\n\nGROUP BY t0.[Created], t0.[CountryCode], DATEADD(day, DATEDIFF(day, 0, t0.[Created]), 0)\nORDER BY t0.[Created] DESC]\n(Background on this error at: https://sqlalche.me/e/20/f405)\n"
+    }
+  ]
+}

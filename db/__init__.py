@@ -35,7 +35,6 @@ def _enforce_select_only(sql: str) -> None:
     if not s:
         raise ValueError("Empty SQL")
 
-    # quick banlist scan (even if someone tries to hide it)
     if _BANNED.search(s):
         raise ValueError("Unsafe SQL blocked at DB layer: non-SELECT keyword detected")
 
@@ -50,55 +49,44 @@ def _enforce_select_only(sql: str) -> None:
 
 
 # -----------------------------
-# Engine
+# Engine (STANDARDIZED: DB_* + ODBC_*)
 # -----------------------------
 def build_mssql_engine(settings) -> Engine:
     """
     SQL Server engine using SQLAlchemy + pyodbc.
-
-    IMPORTANT:
-    Prefer ODBC connection string via odbc_connect because:
-    - driver names often have spaces
-    - passwords may contain special chars
-    - consistent behavior across environments
+    Uses DB_* + ODBC_* fields from Settings (matches your config.py screenshot).
     """
-    driver = settings.MSSQL_DRIVER
-    server = settings.MSSQL_SERVER
-    database = settings.MSSQL_DATABASE
-    username = settings.MSSQL_USERNAME
-    password = settings.MSSQL_PASSWORD
+    db_dialect = getattr(settings, "DB_DIALECT", "mssql+pyodbc")
+    driver = getattr(settings, "ODBC_DRIVER", "ODBC Driver 18 for SQL Server")
 
-    encrypt = "yes" if str(getattr(settings, "MSSQL_ENCRYPT", "yes")).lower() in ("1", "true", "yes") else "no"
-    trust_cert = "yes" if str(getattr(settings, "MSSQL_TRUST_CERT", "no")).lower() in ("1", "true", "yes") else "no"
+    host = settings.DB_HOST
+    port = int(getattr(settings, "DB_PORT", 1433))
+    db = settings.DB_NAME
+    user = settings.DB_USERNAME
+    pwd = settings.DB_PASSWORD
 
-    # Optional extras
-    app_intent = str(getattr(settings, "MSSQL_APP_INTENT", "ReadOnly"))
-    mars = str(getattr(settings, "MSSQL_MARS", "no")).lower()  # MultiActiveResultSets (usually unnecessary)
-    connect_timeout = int(getattr(settings, "MSSQL_CONNECT_TIMEOUT", 15))
+    # optional extras from config.py (example: "TrustServerCertificate=yes;Encrypt=no")
+    extra = (getattr(settings, "ODBC_EXTRA_PARAMS", "") or "").strip()
+    if extra and not extra.endswith(";"):
+        extra += ";"
 
+    # Always read-only intent
     odbc = (
         f"Driver={{{driver}}};"
-        f"Server={server};"
-        f"Database={database};"
-        f"UID={username};"
-        f"PWD={password};"
-        f"Encrypt={encrypt};"
-        f"TrustServerCertificate={trust_cert};"
-        f"ApplicationIntent={app_intent};"
-        f"Connection Timeout={connect_timeout};"
+        f"Server={host},{port};"
+        f"Database={db};"
+        f"Uid={user};"
+        f"Pwd={pwd};"
+        f"ApplicationIntent=ReadOnly;"
+        f"{extra}"
     )
 
-    # If you really need MARS:
-    if mars in ("1", "true", "yes"):
-        odbc += "MARS_Connection=yes;"
+    conn_url = f"{db_dialect}:///?odbc_connect={quote_plus(odbc)}"
 
-    conn_url = f"mssql+pyodbc:///?odbc_connect={quote_plus(odbc)}"
-
-    # pool_pre_ping avoids stale connections; pool_recycle helps with long-lived apps
     return create_engine(
         conn_url,
         pool_pre_ping=True,
-        pool_recycle=int(getattr(settings, "MSSQL_POOL_RECYCLE", 1800)),
+        pool_recycle=int(getattr(settings, "DB_POOL_RECYCLE", 1800)),
         future=True,
     )
 
@@ -128,13 +116,8 @@ def run_sql_query(
       - streaming results (chunked) to avoid memory blowups
       - max_rows cutoff
       - best-effort timeout
-
-    NOTE:
-    This function is designed to be safe inside Streamlit (reruns),
-    and to avoid connection pool exhaustion.
     """
     if settings is None:
-        # only if your Settings() constructor is safe; otherwise pass settings explicitly always
         from config import Settings  # lazy import
         settings = Settings()
 
@@ -142,10 +125,14 @@ def run_sql_query(
 
     engine = get_engine(settings)
 
-    timeout_seconds = int(timeout_seconds) if timeout_seconds and timeout_seconds > 0 else 3600
-    max_rows = int(max_rows) if max_rows and max_rows > 0 else 200000
+    timeout_seconds = int(timeout_seconds) if timeout_seconds and timeout_seconds > 0 else int(
+        getattr(settings, "STATEMENT_TIMEOUT_SECONDS", 3600)
+    )
+    max_rows = int(max_rows) if max_rows and max_rows > 0 else int(
+        getattr(settings, "MAX_RETURNED_ROWS", 200000)
+    )
 
-    chunksize = int(getattr(settings, "SQL_CHUNKSIZE", 50000))
+    chunksize = int(getattr(settings, "FETCH_CHUNK_SIZE", getattr(settings, "SQL_CHUNKSIZE", 50000)))
     chunksize = max(1000, min(chunksize, 200000))
 
     lock_timeout_ms = int(getattr(settings, "MSSQL_LOCK_TIMEOUT_MS", 30000))
@@ -166,10 +153,8 @@ def run_sql_query(
         except Exception:
             pass
 
-        # best-effort driver timeout (sometimes respected by pyodbc)
         conn = conn.execution_options(stream_results=True, timeout=timeout_seconds)
 
-        # Use pandas streaming iterator
         it = pd.read_sql_query(
             sql=text(sql),
             con=conn,
@@ -177,7 +162,6 @@ def run_sql_query(
             chunksize=chunksize,
         )
 
-        # If chunksize is ignored, pandas can return DF; handle anyway
         if isinstance(it, pd.DataFrame):
             return it.head(max_rows)
 
@@ -191,7 +175,6 @@ def run_sql_query(
             if rows_so_far >= max_rows:
                 break
 
-            # wall-clock cutoff (won't always cancel server query, but stops ingestion)
             if (time.time() - t0) > float(timeout_seconds):
                 break
 
