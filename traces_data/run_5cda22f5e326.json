@@ -1,0 +1,649 @@
+{
+  "run_id": "5cda22f5e326",
+  "created_at": 1767799704,
+  "status": "failed",
+  "nodes": {
+    "RUN_CONFIG": {
+      "timestamp": 1767799711,
+      "payload": {
+        "developer_mode": true,
+        "large_mode": true,
+        "allowed_tables_count": 36,
+        "allowed_tables_preview": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.sysdiagrams",
+          "dbo.test"
+        ],
+        "max_connections_per_run": 10
+      }
+    },
+    "A_intent": {
+      "timestamp": 1767799862,
+      "payload": {
+        "kpis": [],
+        "dimensions": [],
+        "time_range": null,
+        "granularity": null,
+        "segments": [],
+        "filters": [],
+        "confidence": 0.75,
+        "notes": "Request to create a dashboard without specifying any KPIs, dimensions, time range, granularity, segments, or filters."
+      }
+    },
+    "A_intent__critique": {
+      "timestamp": 1767799862,
+      "payload": {
+        "step": "A_intent",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "B_schema_reasoning": {
+      "timestamp": 1767799862,
+      "payload": {
+        "candidate_tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.MBPSBDetails",
+          "dbo.Members"
+        ],
+        "scoring_top": [
+          [
+            1.0,
+            "dbo.ActivityAuditLogs"
+          ],
+          [
+            1.0,
+            "dbo.MemberDeleteAuditLogs"
+          ],
+          [
+            1.0,
+            "dbo.MemberOrders"
+          ],
+          [
+            1.0,
+            "dbo.PMCDataProcessingActivityLog"
+          ],
+          [
+            1.0,
+            "dbo.RewardsAccountQueryAuditLogs"
+          ],
+          [
+            1.0,
+            "dbo.RewardsRedemptionAuditLogs"
+          ],
+          [
+            1.0,
+            "dbo.SheeridVerification"
+          ],
+          [
+            0.5,
+            "dbo.MBPSBDetails"
+          ],
+          [
+            0.5,
+            "dbo.Members"
+          ],
+          [
+            0.0,
+            "dbo.__EFMigrationsHistory"
+          ],
+          [
+            0.0,
+            "dbo.BAUOptInFileProcesses"
+          ],
+          [
+            0.0,
+            "dbo.CPSMembers"
+          ],
+          [
+            0.0,
+            "dbo.CPSMembers_US"
+          ],
+          [
+            0.0,
+            "dbo.DataChangeLog"
+          ],
+          [
+            0.0,
+            "dbo.EnrollCampaigns"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigChecks"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigCoupons"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigsMaster"
+          ],
+          [
+            0.0,
+            "dbo.MBPConfigsMstr"
+          ],
+          [
+            0.0,
+            "dbo.MBPMemberCouponCount"
+          ],
+          [
+            0.0,
+            "dbo.MBPMemberCouponData"
+          ],
+          [
+            0.0,
+            "dbo.MBPSBDetails_old"
+          ],
+          [
+            0.0,
+            "dbo.MemberPersuade"
+          ],
+          [
+            0.0,
+            "dbo.Members_02022024"
+          ],
+          [
+            0.0,
+            "dbo.Members_US"
+          ],
+          [
+            0.0,
+            "dbo.MppMemberEnrolls"
+          ],
+          [
+            0.0,
+            "dbo.OptOutMembers"
+          ],
+          [
+            0.0,
+            "dbo.PersuadeRegistrationFailures"
+          ],
+          [
+            0.0,
+            "dbo.ProgramDetails"
+          ],
+          [
+            0.0,
+            "dbo.ProgramDetailsHistory"
+          ]
+        ],
+        "score_breakdown": {
+          "dbo.ActivityAuditLogs": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 2648,
+            "has_content_index": false
+          },
+          "dbo.MemberDeleteAuditLogs": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 42,
+            "has_content_index": false
+          },
+          "dbo.MemberOrders": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 41646,
+            "has_content_index": false
+          },
+          "dbo.PMCDataProcessingActivityLog": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:range"
+            ],
+            "matched_content": [],
+            "row_count": 6443,
+            "has_content_index": false
+          },
+          "dbo.RewardsAccountQueryAuditLogs": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 942,
+            "has_content_index": false
+          },
+          "dbo.RewardsRedemptionAuditLogs": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 321625,
+            "has_content_index": false
+          },
+          "dbo.SheeridVerification": {
+            "total_score": 1.0,
+            "schema_score": 1.0,
+            "content_score": 0.0,
+            "join_bonus": 0.0,
+            "matched_schema": [
+              "col:request"
+            ],
+            "matched_content": [],
+            "row_count": 20,
+            "has_content_index": false
+          },
+          "dbo.MBPSBDetails": {
+            "total_score": 0.5,
+            "schema_score": 0.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [],
+            "matched_content": [],
+            "row_count": 5,
+            "has_content_index": false
+          },
+          "dbo.Members": {
+            "total_score": 0.5,
+            "schema_score": 0.0,
+            "content_score": 0.0,
+            "join_bonus": 0.5,
+            "matched_schema": [],
+            "matched_content": [],
+            "row_count": 10707,
+            "has_content_index": false
+          }
+        },
+        "used_content_index": false,
+        "query_keywords": [
+          "any",
+          "dimensions",
+          "filters",
+          "granularity",
+          "kpis",
+          "range",
+          "request",
+          "segments",
+          "specifying",
+          "time",
+          "without"
+        ]
+      }
+    },
+    "B_schema_reasoning__critique": {
+      "timestamp": 1767799862,
+      "payload": {
+        "step": "B_schema_reasoning",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "C_plan": {
+      "timestamp": 1767801137,
+      "payload": {
+        "tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.MemberDeleteAuditLogs"
+        ],
+        "joins": [
+          {
+            "left_table": "MBPSBDetails",
+            "right_table": "Members",
+            "left_key": "MemberID",
+            "right_key": "MemberID",
+            "join_type": "INNER"
+          }
+        ],
+        "metrics": [
+          {
+            "name": "TotalMBPSBDetails",
+            "agg": "COUNT",
+            "field": "MBPSBDetails.*",
+            "depends_on": null
+          },
+          {
+            "name": "UniqueMembers",
+            "agg": "COUNT_DISTINCT",
+            "field": "Members.MemberID",
+            "depends_on": null
+          }
+        ],
+        "dimensions": [
+          "MBPSBDetails.MBPConfigID",
+          "MBPSBDetails.ProgramID",
+          "Members.Name"
+        ],
+        "filters": [
+          {
+            "field": "MBPSBDetails.DateCreated",
+            "operator": "=",
+            "value": "2023-10-01"
+          }
+        ],
+        "time_field": "MBPSBDetails.DateCreated",
+        "time_grain": "DAY",
+        "order_by": [
+          {
+            "field": "MBPSBDetails.DateCreated",
+            "dir": "ASC"
+          }
+        ],
+        "visuals": [
+          {
+            "type": "BAR_CHART",
+            "title": "Total MBPSB Details by Day",
+            "x": "MBPSBDetails.DateCreated",
+            "y": "TotalMBPSBDetails",
+            "color": "MBPSBDetails.MBPConfigID"
+          }
+        ],
+        "expected_columns": [
+          "MBPSBDetails.*",
+          "Members.MemberID",
+          "Members.Name"
+        ],
+        "query_cost_risk": "low",
+        "notes": "Joining MBPSBDetails and Members to analyze MBPSB details by member, with a focus on daily trends.",
+        "large_mode": true
+      }
+    },
+    "C_plan__large_mode": {
+      "timestamp": 1767801137,
+      "payload": {
+        "large_mode": true
+      }
+    },
+    "C_plan__critique": {
+      "timestamp": 1767801137,
+      "payload": {
+        "step": "C_plan",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "D_human_review": {
+      "timestamp": 1767801137,
+      "payload": {
+        "mode": "E_HUMAN_REVIEW",
+        "instructions": [
+          "Approve or edit ONLY what you want changed.",
+          "If you remove tables, ensure joins/metrics still make sense.",
+          "Edits must be explicit. System will not infer unstated changes."
+        ],
+        "current_allowed_tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.BAUOptInFileProcesses",
+          "dbo.CPSMembers",
+          "dbo.CPSMembers_US",
+          "dbo.DataChangeLog",
+          "dbo.EnrollCampaigns",
+          "dbo.MBPConfigChecks",
+          "dbo.MBPConfigCoupons",
+          "dbo.MBPConfigsMaster",
+          "dbo.MBPConfigsMstr",
+          "dbo.MBPMemberCouponCount",
+          "dbo.MBPMemberCouponData",
+          "dbo.MBPSBDetails",
+          "dbo.MBPSBDetails_old",
+          "dbo.MemberDeleteAuditLogs",
+          "dbo.MemberOrders",
+          "dbo.MemberPersuade",
+          "dbo.Members",
+          "dbo.Members_02022024",
+          "dbo.Members_US",
+          "dbo.MppMemberEnrolls",
+          "dbo.OptOutMembers",
+          "dbo.PMCDataProcessingActivityLog",
+          "dbo.PersuadeRegistrationFailures",
+          "dbo.ProgramDetails",
+          "dbo.ProgramDetailsHistory",
+          "dbo.RewardCampaignActivityLogs",
+          "dbo.RewardCampaignCoupons",
+          "dbo.RewardCampaigns",
+          "dbo.RewardsAccountQueryAuditLogs",
+          "dbo.RewardsRedemptionAuditLogs",
+          "dbo.SheeridVerification",
+          "dbo.Users",
+          "dbo.__EFMigrationsHistory",
+          "dbo.sysdiagrams",
+          "dbo.test"
+        ],
+        "proposed_plan": {
+          "tables": [
+            "dbo.ActivityAuditLogs",
+            "dbo.MemberDeleteAuditLogs"
+          ],
+          "joins": [
+            {
+              "left_table": "MBPSBDetails",
+              "right_table": "Members",
+              "left_key": "MemberID",
+              "right_key": "MemberID",
+              "join_type": "INNER"
+            }
+          ],
+          "metrics": [
+            {
+              "name": "TotalMBPSBDetails",
+              "agg": "COUNT",
+              "field": "MBPSBDetails.*",
+              "depends_on": null
+            },
+            {
+              "name": "UniqueMembers",
+              "agg": "COUNT_DISTINCT",
+              "field": "Members.MemberID",
+              "depends_on": null
+            }
+          ],
+          "dimensions": [
+            "MBPSBDetails.MBPConfigID",
+            "MBPSBDetails.ProgramID",
+            "Members.Name"
+          ],
+          "filters": [
+            {
+              "field": "MBPSBDetails.DateCreated",
+              "operator": "=",
+              "value": "2023-10-01"
+            }
+          ],
+          "time_field": "MBPSBDetails.DateCreated",
+          "time_grain": "DAY",
+          "order_by": [
+            {
+              "field": "MBPSBDetails.DateCreated",
+              "dir": "ASC"
+            }
+          ],
+          "visuals": [
+            {
+              "type": "BAR_CHART",
+              "title": "Total MBPSB Details by Day",
+              "x": "MBPSBDetails.DateCreated",
+              "y": "TotalMBPSBDetails",
+              "color": "MBPSBDetails.MBPConfigID"
+            }
+          ],
+          "expected_columns": [
+            "MBPSBDetails.*",
+            "Members.MemberID",
+            "Members.Name"
+          ],
+          "query_cost_risk": "low",
+          "notes": "Joining MBPSBDetails and Members to analyze MBPSB details by member, with a focus on daily trends.",
+          "large_mode": true
+        },
+        "intent": {
+          "kpis": [],
+          "dimensions": [],
+          "time_range": null,
+          "granularity": null,
+          "segments": [],
+          "filters": [],
+          "confidence": 0.75,
+          "notes": "Request to create a dashboard without specifying any KPIs, dimensions, time range, granularity, segments, or filters."
+        },
+        "editable_fields": [
+          "allowed_tables",
+          "plan.tables",
+          "plan.joins",
+          "plan.metrics",
+          "plan.dimensions",
+          "plan.filters",
+          "plan.time_field",
+          "plan.time_grain",
+          "plan.order_by",
+          "plan.visuals"
+        ],
+        "edit_schema": {
+          "allowed_tables": "list[str] (subset of available tables)",
+          "plan": "object (same shape as proposed_plan)"
+        }
+      }
+    },
+    "D_human_review__critique": {
+      "timestamp": 1767801137,
+      "payload": {
+        "step": "D_human_review",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "E_sql_generation": {
+      "timestamp": 1767801137,
+      "payload": {
+        "sql": "SELECT TOP (200000)\n  t0.[Id] AS [Id],\n  t0.[PostDate] AS [PostDate],\n  t0.[PostSource] AS [PostSource],\n  t0.[RequestData] AS [RequestData],\n  t0.[ResponseData] AS [ResponseData],\n  t0.[ProfileId] AS [ProfileId],\n  t0.[MemberKey] AS [MemberKey],\n  t0.[StatusCode] AS [StatusCode],\n  t0.[ErrorMessage] AS [ErrorMessage],\n  t0.[EventSource] AS [EventSource],\n  t0.[CountryCode] AS [CountryCode],\n  t0.[OrderJson] AS [OrderJson]\nFROM [dbo].[ActivityAuditLogs] AS t0",
+        "params": {},
+        "expected_columns": [
+          "Id",
+          "PostDate",
+          "PostSource",
+          "RequestData",
+          "ResponseData",
+          "ProfileId",
+          "MemberKey",
+          "StatusCode",
+          "ErrorMessage",
+          "EventSource",
+          "CountryCode",
+          "OrderJson"
+        ],
+        "is_aggregated": false,
+        "top": 200000,
+        "time_grain": "DAY",
+        "final_tables": [
+          "dbo.ActivityAuditLogs",
+          "dbo.MemberDeleteAuditLogs"
+        ],
+        "recovered_tables": false
+      }
+    },
+    "E_sql_generation__critique": {
+      "timestamp": 1767801137,
+      "payload": {
+        "step": "E_sql_generation",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    },
+    "F_sql_safety": {
+      "timestamp": 1767801137,
+      "payload": {
+        "ok": true,
+        "reasons": [],
+        "normalized_sql": "SELECT TOP (200000) t0.[Id] AS [Id],\n       t0.[PostDate] AS [PostDate],\n       t0.[PostSource] AS [PostSource],\n       t0.[RequestData] AS [RequestData],\n       t0.[ResponseData] AS [ResponseData],\n       t0.[ProfileId] AS [ProfileId],\n       t0.[MemberKey] AS [MemberKey],\n       t0.[StatusCode] AS [StatusCode],\n       t0.[ErrorMessage] AS [ErrorMessage],\n       t0.[EventSource] AS [EventSource],\n       t0.[CountryCode] AS [CountryCode],\n       t0.[OrderJson] AS [OrderJson]\nFROM [dbo].[ActivityAuditLogs] AS t0",
+        "enforced_limit": {
+          "applied": false
+        }
+      }
+    },
+    "F_sql_safety__critique": {
+      "timestamp": 1767801137,
+      "payload": {
+        "step": "F_sql_safety",
+        "confidence": 0.7,
+        "force_hitl": false,
+        "issues": [],
+        "recommendation": "Proceed"
+      }
+    }
+  },
+  "errors": [
+    {
+      "timestamp": 1767801160,
+      "node": "G_execute",
+      "message": "Binder Error: Table \"cache_catalog\" does not have a column named \"CURRENT_TIMESTAMP\"\n\nCandidate bindings: : \"created_at\"",
+      "stack": "Traceback (most recent call last):\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\core\\run_pipeline.py\", line 280, in run_agentic_pipeline\n    df, exec_meta = executor.run(sql=sql_bundle[\"sql\"], params=sql_bundle.get(\"params\") or {})\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\agents\\executor.py\", line 78, in run\n    self.duckdb.register_parquet(cache_key, parquet_path)\n  File \"C:\\Users\\Adheesh_Srivastava\\OneDrive - Dell Technologies\\Desktop\\Autogen_Dashboard_Creation\\cache\\duckdb_store.py\", line 72, in register_parquet\n    con.execute(\n_duckdb.BinderException: Binder Error: Table \"cache_catalog\" does not have a column named \"CURRENT_TIMESTAMP\"\n\nCandidate bindings: : \"created_at\"\n"
+    }
+  ]
+}
